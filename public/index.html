@@ -1,0 +1,1880 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>24 Heelz NG — Quality for less</title>
+    <meta name="description" content="Ladies heels delivered across Nigeria." />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/storefront.css" />
+    <style>
+      :root {
+        --ink: #111;
+        --bg: #fff;
+        --soft: #f3f1ee;
+        --line: #e2dfda;
+        --mute: #6b6760;
+        --gold: #b8893b;
+        --bad: #b3261e;
+        --ok: #1f7a45;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        font:
+          16px/1.5 "DM Sans",
+          system-ui,
+          sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 600;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: auto;
+        padding: 0 20px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 64px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      .brand img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      .nav nav {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+      }
+      .nav nav a {
+        padding: 8px 14px;
+        border-radius: 20px;
+      }
+      .nav nav a.on {
+        background: var(--ink);
+        color: #fff;
+      }
+      .cartbtn {
+        background: var(--ink);
+        color: #fff;
+        border: 0;
+        border-radius: 20px;
+        padding: 8px 16px;
+      }
+      .btn {
+        display: inline-block;
+        background: var(--ink);
+        color: #fff;
+        border: 0;
+        border-radius: 28px;
+        padding: 13px 28px;
+        font-weight: 700;
+      }
+      .btn.alt {
+        background: #fff;
+        color: var(--ink);
+        border: 1px solid var(--ink);
+      }
+      .btn.sm {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      .btn[disabled] {
+        background: var(--line);
+        color: var(--mute);
+        cursor: not-allowed;
+      }
+      .hero {
+        background: radial-gradient(circle at 78% 40%, #e9e6e1, #fff 65%);
+        padding: 56px 0;
+      }
+      .hero .wrap {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 30px;
+        align-items: center;
+      }
+      .hero h1 {
+        font-size: clamp(40px, 6vw, 76px);
+        line-height: 1.02;
+      }
+      .hero h1 i {
+        font-weight: 500;
+      }
+      .hero p {
+        color: var(--mute);
+        margin: 18px 0 26px;
+        max-width: 42ch;
+      }
+      .hero .art {
+        background: #111;
+        border-radius: 50% 50% 8% 8%/40% 40% 8% 8%;
+        padding: 30px;
+      }
+      .perks {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+      }
+      .perks b {
+        display: block;
+      }
+      section.blk {
+        padding: 44px 0;
+      }
+      .sh {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 18px;
+        gap: 10px;
+      }
+      .sh h2 {
+        font-size: 30px;
+      }
+      .sh .arr button {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid var(--ink);
+        background: #fff;
+        margin-left: 6px;
+      }
+      .car {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        padding-bottom: 6px;
+        scrollbar-width: none;
+      }
+      .car::-webkit-scrollbar {
+        display: none;
+      }
+      .card {
+        flex: 0 0 220px;
+        scroll-snap-align: start;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+      }
+      .card .im {
+        background: var(--soft);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+      }
+      .card img,
+      .card svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .card .tx {
+        padding: 12px;
+      }
+      .card h3 {
+        font: 700 15px "DM Sans";
+      }
+      .price {
+        font-weight: 700;
+      }
+      .tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 12px;
+        background: #fff;
+      }
+      .tag.out {
+        background: var(--bad);
+        color: #fff;
+      }
+      .tag.low {
+        background: var(--gold);
+        color: #fff;
+      }
+      .card.na .im {
+        opacity: 0.55;
+      }
+      .cats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+      .cat {
+        background: var(--soft);
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+        font-weight: 700;
+        cursor: pointer;
+        border: 0;
+      }
+      .cat svg {
+        width: 100%;
+        height: 80px;
+      }
+      .band {
+        background: var(--ink);
+        color: #fff;
+        text-align: center;
+        padding: 48px 20px;
+      }
+      .band h2 {
+        font-size: 34px;
+        margin-bottom: 16px;
+        font-style: italic;
+      }
+      .quotes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .quotes div {
+        background: var(--soft);
+        padding: 18px;
+        border-radius: 10px;
+      }
+      footer {
+        background: var(--ink);
+        color: #ccc;
+        padding: 34px 0;
+        font-size: 14px;
+      }
+      footer .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ov {
+        position: fixed;
+        inset: 0;
+        background: #0009;
+        z-index: 50;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .ov.show {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 14px;
+        max-width: 760px;
+        width: 100%;
+        max-height: 92vh;
+        overflow: auto;
+        padding: 22px;
+        position: relative;
+      }
+      .modal .x {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        border: 0;
+        background: none;
+        font-size: 26px;
+      }
+      .pd {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+      .pd .im {
+        background: var(--soft);
+        border-radius: 10px;
+        overflow: hidden;
+        aspect-ratio: 1;
+      }
+      .pd .im img,
+      .pd .im svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sizes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 8px 0 16px;
+      }
+      .sizes button {
+        border: 1px solid var(--ink);
+        background: #fff;
+        border-radius: 6px;
+        padding: 6px 11px;
+      }
+      .sizes button.on {
+        background: var(--ink);
+        color: #fff;
+      }
+      .st.ok {
+        color: var(--ok);
+      }
+      .st.no {
+        color: var(--bad);
+      }
+      .st {
+        font-weight: 700;
+      }
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 10px 0 4px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+      }
+      .bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
+        background: var(--ink);
+        color: #fff;
+        padding: 12px 20px;
+        display: none;
+        align-items: center;
+        gap: 14px;
+        justify-content: center;
+      }
+      .bar.show {
+        display: flex;
+      }
+      .bar .btn {
+        background: #fff;
+        color: var(--ink);
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .row .th {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--soft);
+        flex: none;
+      }
+      .row .th img,
+      .row .th svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .adm {
+        padding: 30px 0 90px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin: 14px 0;
+      }
+      .tabs button {
+        border: 1px solid var(--ink);
+        background: #fff;
+        border-radius: 20px;
+        padding: 8px 16px;
+      }
+      .tabs .on {
+        background: var(--ink);
+        color: #fff;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 14px;
+      }
+      .ord {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .pill {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 12px;
+        background: var(--soft);
+      }
+      .toast {
+        position: fixed;
+        top: 76px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        z-index: 90;
+        display: none;
+      }
+      @media (max-width: 760px) {
+        .hero .wrap,
+        .pd,
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        .perks,
+        .quotes {
+          grid-template-columns: 1fr 1fr;
+        }
+        .cats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .brand span {
+          display: none;
+        }
+        .card {
+          flex-basis: 170px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .car {
+          scroll-behavior: auto;
+        }
+      }
+
+      .hero .art img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 14px;
+        display: block;
+      }
+      .thumbs {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .thumbs button {
+        width: 56px;
+        height: 56px;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--soft);
+      }
+      .thumbs button.on {
+        border-color: var(--ink);
+      }
+      .thumbs img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .det {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 14px;
+        margin: 12px 0;
+        font-size: 15px;
+      }
+      .det dt {
+        color: var(--mute);
+      }
+      .det dd {
+        margin: 0;
+      }
+      .mut {
+        color: var(--mute);
+        font-size: 14px;
+      }
+      .page {
+        padding: 44px 20px 80px;
+        max-width: 860px;
+      }
+      .page h1 {
+        font-size: 40px;
+        margin-bottom: 14px;
+      }
+      .page h2 {
+        font-size: 26px;
+        margin: 28px 0 8px;
+      }
+      .page p {
+        margin: 8px 0;
+        max-width: 70ch;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .steps div {
+        background: var(--soft);
+        border-radius: 10px;
+        padding: 18px;
+      }
+      .steps b {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+      table.sz {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 420px;
+        margin: 12px 0;
+      }
+      .sz th,
+      .sz td {
+        border-bottom: 1px solid var(--line);
+        padding: 8px 10px;
+        text-align: left;
+      }
+      details {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 0;
+      }
+      summary {
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .cgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .cgrid div {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .cgrid b {
+        display: block;
+      }
+      .wab {
+        position: fixed;
+        right: 16px;
+        bottom: 76px;
+        z-index: 25;
+        background: #1f7a45;
+        color: #fff;
+        border-radius: 28px;
+        padding: 11px 18px;
+        font-weight: 700;
+      }
+      .thm {
+        position: relative;
+        display: inline-block;
+        margin: 4px;
+      }
+      .thm img {
+        width: 76px;
+        height: 76px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid var(--line);
+        cursor: pointer;
+      }
+      .thm.main img {
+        border-color: var(--ink);
+      }
+      .thm button {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 0;
+        background: var(--bad);
+        color: #fff;
+        line-height: 1;
+      }
+      .fl {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .fl b {
+        color: #fff;
+      }
+      @media (max-width: 760px) {
+        .steps,
+        .cgrid {
+          grid-template-columns: 1fr;
+        }
+        .nav nav {
+          max-width: 52vw;
+          overflow-x: auto;
+        }
+        .wab {
+          bottom: 84px;
+        }
+      }
+      /* 2026 boutique refresh */
+      :root { --ink:#24171e; --wine:#6f3045; --rose:#f7e8e8; --cream:#fffaf6; --gold:#b58a4a; --soft:#f7f1ee; --line:#e8deda; }
+      body { background:var(--cream); letter-spacing:.01em; }
+      header { background:rgba(255,250,246,.94); backdrop-filter:blur(14px); }
+      .brand { font-size:12px; letter-spacing:.14em; }
+      .brand img { width:34px; height:34px; }
+      .nav nav a { font-size:13px; font-weight:700; }
+      .nav nav a.on,.cartbtn,.btn { background:var(--wine); }
+      .btn { box-shadow:0 8px 20px #6f30452b; transition:transform .2s,background .2s; }
+      .btn:hover { transform:translateY(-2px); background:#4d1d2f; }
+      .hero { min-height:600px; padding:0; background:linear-gradient(110deg,#fbf1ed 0%,#f7e4e5 54%,#e9d9d5 100%); overflow:hidden; }
+      .hero .wrap { min-height:600px; grid-template-columns:1fr 1.12fr; gap:56px; }
+      .hero h1 { font-size:clamp(48px,6vw,82px); letter-spacing:-.055em; }
+      .hero h1 i { color:var(--wine); }
+      .hero p { font-size:17px; }
+      .hero .art { height:480px; padding:0; border-radius:190px 190px 14px 14px; background:#d9c9c4; box-shadow:20px 22px 0 #ead8d4; overflow:hidden; }
+      .hero .art img { width:100%; height:100%; object-fit:cover; mix-blend-mode:multiply; }
+      .perks { margin-top:-1px; background:#fff; border:0; border-radius:0 0 20px 20px; padding:22px 24px; box-shadow:0 8px 30px #3c1c2410; }
+      .perks b { color:var(--wine); }
+      section.blk { padding:68px 0; }
+      .sh h2 { font-size:38px; letter-spacing:-.04em; }
+      .card { flex-basis:250px; border:0; border-radius:16px; box-shadow:0 4px 22px #3c1c2410; transition:transform .25s,box-shadow .25s; }
+      .card:hover { transform:translateY(-6px); box-shadow:0 14px 36px #3c1c2422; }
+      .card .im { aspect-ratio:4/5; background:#eee4df; }
+      .card .tx { padding:15px; }
+      .card h3 { font-family:"Playfair Display",Georgia,serif; font-size:17px; }
+      .price { color:var(--wine); margin-top:4px; }
+      .tag { color:var(--wine); }
+      .cats { grid-template-columns:repeat(3,1fr); }
+      .cat { min-height:160px; background:#fff; border:1px solid #efe4df; border-radius:14px; overflow:hidden; padding:0 0 12px; transition:transform .2s; }
+      .cat:hover { transform:translateY(-3px); }
+      .cat img,.cat svg { width:100%; height:120px; object-fit:cover; display:block; margin-bottom:7px; }
+      .band { padding:88px 20px; background:linear-gradient(110deg,#24171e,#6f3045); }
+      .band h2 { font-size:46px; }
+      .editorial { display:grid; grid-template-columns:1.25fr .75fr; gap:24px; }
+      .editorial .feature { min-height:380px; border-radius:18px; overflow:hidden; position:relative; background:#d9c3bd; }
+      .editorial img { width:100%; height:100%; object-fit:cover; }
+      .editorial .copy { padding:42px; border-radius:18px; background:#f0dfe0; display:flex; flex-direction:column; justify-content:center; }
+      .eyebrow { color:var(--wine); font-size:11px; text-transform:uppercase; letter-spacing:.16em; font-weight:700; margin-bottom:10px; }
+      .collection-tabs { display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 0; }
+      .collection-tabs a { border:1px solid var(--line); border-radius:999px; padding:9px 15px; background:#fff; font-size:13px; font-weight:700; }
+      .collection-tabs a:hover { border-color:var(--wine); color:var(--wine); }
+      @media (max-width:760px) { .hero .wrap,.editorial { grid-template-columns:1fr; gap:24px; } .hero .wrap { min-height:auto; padding-top:58px; padding-bottom:36px; } .hero .art { height:360px; } .perks,.cats { grid-template-columns:repeat(2,1fr); } .perks { gap:18px; } .sh h2 { font-size:31px; } }
+      /* Compact boutique storefront — keeps multiple auto-moving product rows in view. */
+      .hero { min-height:390px; background:linear-gradient(110deg,#fbf8f6 0%,#f4eeee 58%,#e4dedc 100%); }
+      .hero .wrap { min-height:390px; grid-template-columns:.9fr 1.1fr; gap:34px; }
+      .hero h1 { font-size:clamp(43px,5.2vw,67px); max-width:9ch; }
+      .hero p { font-size:14px; margin:12px 0 17px; max-width:38ch; }
+      .hero .art { height:315px; border-radius:145px 145px 10px 10px; box-shadow:none; background:#d4d0cf; position:relative; display:flex; align-items:end; justify-content:center; }
+      .hero .art > .hero-shoe { width:64%; height:84%; z-index:2; }
+      .hero .art > .hero-bag { width:47%; height:49%; position:absolute; top:9%; right:7%; z-index:3; filter:drop-shadow(0 12px 12px #0004); }
+      .hero .art img { mix-blend-mode:normal; border-radius:10px; object-fit:cover; }
+      .hero .art:after { content:""; position:absolute; bottom:0; left:0; right:0; height:34%; background:linear-gradient(transparent,#24171e99); }
+      .collection-tabs { margin-top:13px; }
+      .collection-tabs a { padding:6px 11px; font-size:11px; }
+      .perks { padding:13px 20px; font-size:11px; border-radius:0 0 12px 12px; }
+      .perks b { font-size:12px; }
+      .home-catalogue { padding:22px 0 28px; }
+      .home-catalogue .sh { margin:0 0 9px; }
+      .home-catalogue .sh h2 { font-size:23px; }
+      .home-catalogue .car { gap:10px; margin-bottom:20px; }
+      .home-catalogue .card { flex:0 0 calc((100% - 20px) / 3); border-radius:9px; }
+      .home-catalogue .card .im { aspect-ratio:auto; height:116px; }
+      .home-catalogue .card .tx { padding:7px 9px 9px; }
+      .home-catalogue .card h3 { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .home-catalogue .price { font-size:12px; }
+      .home-catalogue .tag { font-size:9px; top:6px; left:6px; padding:2px 6px; }
+      .home-catalogue .arr button { width:27px; height:27px; font-size:18px; }
+      .home-catalogue .btn.sm { padding:5px 9px; font-size:11px; }
+      .home-categories { padding:25px 0 10px !important; }
+      .home-categories .cats { grid-template-columns:repeat(5,1fr); gap:8px; }
+      .home-categories .cat { min-height:105px; font-size:11px; padding-bottom:7px; }
+      .home-categories .cat img { height:75px; margin-bottom:3px; }
+      @media (max-width:760px) { .hero { min-height:auto; } .hero .wrap { grid-template-columns:1fr; min-height:auto; padding-top:36px; } .hero h1 { max-width:12ch; } .hero .art { height:270px; } .home-categories .cats { grid-template-columns:repeat(3,1fr); } .home-catalogue .card { flex:0 0 calc((100% - 12px) / 2); } }
+      /* Complete fashion-boutique rebuild */
+      :root { --ink:#21151a; --berry:#7c2848; --blush:#f6e7e7; --ivory:#fffaf7; --sand:#efe0d7; --gold:#b99055; --muted:#796c70; }
+      body { background:var(--ivory); color:var(--ink); }
+      header { border-top:3px solid var(--ink); }
+      .nav { height:70px; }
+      .fashion-hero { background:var(--ink); color:#fff; min-height:560px; overflow:hidden; position:relative; }
+      .fashion-hero .wrap { min-height:560px; display:grid; grid-template-columns:.9fr 1.1fr; align-items:center; gap:40px; }
+      .fashion-hero .eyebrow { color:#f1bdcb; }
+      .fashion-hero h1 { font-size:clamp(50px,6.2vw,88px); line-height:.92; letter-spacing:-.07em; max-width:8ch; }
+      .fashion-hero h1 em { color:#f6c2ce; font-weight:500; }
+      .fashion-hero p { color:#e6d9dd; max-width:42ch; margin:22px 0 28px; }
+      .fashion-hero .btn { background:#f7dde3; color:var(--ink); box-shadow:none; }
+      .fashion-hero .btn:hover { background:#fff; }
+      .hero-visual { height:470px; position:relative; }
+      .hero-visual .visual-main { height:100%; width:100%; margin-left:auto; border-radius:220px 220px 12px 12px; overflow:hidden; background:#f7f7f7; }
+      .hero-visual .visual-main img { width:100%; height:100%; object-fit:contain; padding:20px; }
+      .hero-visual .visual-float { position:absolute; width:40%; height:47%; left:2%; bottom:8%; overflow:hidden; border:7px solid var(--ink); border-radius:8px; box-shadow:17px 17px 0 var(--berry); }
+      .hero-visual .visual-float img { width:100%; height:100%; object-fit:cover; }
+      .hero-note { position:absolute; right:0; bottom:0; background:var(--berry); color:#fff; padding:11px 18px; font-size:12px; letter-spacing:.09em; text-transform:uppercase; }
+      .promise-bar { background:#fff; border-bottom:1px solid #eaded9; }
+      .promise-bar .wrap { display:grid; grid-template-columns:repeat(4,1fr); }
+      .promise-bar div { padding:20px 18px; border-right:1px solid #eaded9; font-size:12px; }
+      .promise-bar b { display:block; color:var(--berry); text-transform:uppercase; letter-spacing:.09em; font-size:10px; margin-bottom:3px; }
+      .fashion-section { padding:78px 0; }
+      .section-kicker { color:var(--berry); text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:700; margin-bottom:7px; }
+      .section-title { font-size:clamp(34px,4vw,54px); letter-spacing:-.06em; }
+      .collection-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:28px; }
+      .collection-tile { border:0; background:#fff; text-align:left; padding:0; min-height:270px; overflow:hidden; position:relative; border-radius:3px; }
+      .collection-tile img { width:100%; height:270px; object-fit:cover; transition:transform .5s; }
+      .collection-tile:hover img { transform:scale(1.06); }
+      .collection-tile span { position:absolute; bottom:0; left:0; right:0; padding:14px; color:#fff; background:linear-gradient(transparent,#170d11dc); font:600 17px "Playfair Display",serif; }
+      .showcase { background:#f2e5e2; padding:52px 0 58px; }
+      .showcase .wrap + .wrap { margin-top:28px; }
+      .showcase .sh { margin-bottom:12px; }
+      .showcase .sh h2 { font-size:29px; }
+      .showcase .card { flex:0 0 calc((100% - 24px)/3); border-radius:4px; box-shadow:none; }
+      .showcase .card .im { height:145px; aspect-ratio:auto; }
+      .showcase .card .tx { padding:10px 12px 12px; }
+      .showcase .card h3 { font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .showcase .card .price { font-size:13px; }
+      .showcase .tag { font-size:10px; }
+      .split-story { display:grid; grid-template-columns:1.05fr .95fr; min-height:460px; }
+      .split-story .story-image { overflow:hidden; background:var(--sand); }
+      .split-story .story-image img { width:100%; height:100%; object-fit:cover; }
+      .split-story .story-copy { background:var(--blush); padding:clamp(32px,6vw,86px); display:flex; flex-direction:column; justify-content:center; }
+      .split-story h2 { font-size:clamp(36px,4vw,57px); line-height:.97; letter-spacing:-.06em; }
+      .split-story p { color:var(--muted); margin:18px 0 26px; max-width:37ch; }
+      .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+      .service-card { background:#fff; border:1px solid #eaded9; padding:28px; min-height:190px; }
+      .service-card b { display:block; font:600 23px "Playfair Display",serif; margin:12px 0 6px; }
+      .service-card span { color:var(--berry); font-size:22px; }
+      .service-card p { color:var(--muted); font-size:14px; }
+      .journal { background:#7c2848; color:#fff; text-align:center; padding:80px 20px; }
+      .journal h2 { font-size:clamp(35px,5vw,64px); letter-spacing:-.06em; max-width:16ch; margin:auto; }
+      .journal p { max-width:48ch; margin:16px auto 25px; color:#f7dce3; }
+      .journal .btn { background:#fff; color:var(--berry); box-shadow:none; }
+      @media(max-width:760px) { .fashion-hero,.fashion-hero .wrap { min-height:auto; } .fashion-hero .wrap { grid-template-columns:1fr; padding-top:60px; padding-bottom:0; } .hero-visual { height:380px; } .promise-bar .wrap { grid-template-columns:repeat(2,1fr); } .promise-bar div:nth-child(2) { border-right:0; } .collection-grid { grid-template-columns:repeat(2,1fr); } .collection-tile,.collection-tile img { min-height:210px; height:210px; } .showcase .card { flex:0 0 calc((100% - 10px)/2); } .split-story,.service-grid { grid-template-columns:1fr; } .split-story .story-image { min-height:350px; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="#home"
+          ><img
+            src="data:image/png;base64,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"
+            alt="24 Heelz NG logo"
+          /><span>24 HEELZ NG</span></a
+        >
+        <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+        <nav id="navMenu">
+          <a href="#home" data-n="home">Home</a
+          ><a href="#shop" data-n="shop">Shop</a
+          ><a href="#new" data-n="new">New in</a
+          ><a href="#lookbook" data-n="lookbook">Lookbook</a
+          ><a href="#about" data-n="about">About</a
+          ><a href="#delivery" data-n="delivery">Delivery</a
+          ><a href="#contact" data-n="contact">Contact</a
+          ><a href="#admin" data-n="admin">Admin</a>
+        </nav>
+        <button class="cartbtn" id="cartBtn" aria-label="Open cart">
+          <span aria-hidden="true">🛍</span><span class="cart-label"> Cart</span> <span id="cc">0</span>
+        </button>
+        <button class="order-btn nav-order" id="navOrder" hidden>Order (<span id="navOrderCount">0</span>)</button>
+      </div>
+    </header>
+    <main id="app"></main>
+    <div class="bar" id="bar">
+      <span id="barTxt"></span
+      ><button class="order-btn" id="orderNow">Order (<span id="orderCount">0</span>)</button>
+    </div>
+    <div class="ov" id="ov">
+      <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+    </div>
+    <a class="wab" id="wab" href="https://wa.me/2347079524939?text=Hello%2024%20Heelz%20NG" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3a13 13 0 0 0-10.9 20.1L3.7 28.3l5.4-1.4A13 13 0 1 0 16 3Zm0 23.6a10.5 10.5 0 0 1-5.35-1.46l-.38-.22-3.2.84.86-3.12-.25-.4A10.57 10.57 0 1 1 16 26.6Z"/><path fill="#fff" d="M22.15 18.56c-.34-.17-2.02-1-2.33-1.1-.31-.12-.54-.17-.77.17-.23.34-.88 1.1-1.08 1.33-.2.23-.4.26-.74.09-2.02-1.01-3.35-1.8-4.68-4.08-.35-.6.35-.56 1-1.84.12-.24.06-.45-.03-.62-.09-.17-.77-1.86-1.05-2.55-.28-.67-.57-.58-.77-.59l-.66-.01c-.23 0-.6.09-.91.43-.31.34-1.2 1.17-1.2 2.86 0 1.68 1.23 3.31 1.4 3.54.17.23 2.41 3.68 5.84 5.16.82.35 1.45.57 1.95.73.82.26 1.57.22 2.16.13.66-.1 2.02-.83 2.3-1.63.29-.8.29-1.49.2-1.64-.08-.15-.3-.23-.63-.4Z"/></svg></a>
+    <div class="toast" id="toast"></div>
+    <footer>
+      <div class="wrap">
+        <div>
+          <b style="color: #fff">24 HEELZ NG</b><br />Quality for less.<br />Delivery
+          across Nigeria.
+        </div>
+        <div id="ft" style="display: flex; gap: 44px; flex-wrap: wrap"></div>
+        <div>© 2026 24 Heelz NG</div>
+      </div>
+    </footer>
+    <script>
+      const $ = (s) => document.querySelector(s),
+        esc = (s) =>
+          String(s ?? "").replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
+      const N = (n) => "₦" + Number(n).toLocaleString("en-NG");
+      const LS = {
+        get(k, d) {
+          try {
+            const v = localStorage.getItem(k);
+            return v ? JSON.parse(v) : d;
+          } catch (e) {
+            return d;
+          }
+        },
+        set(k, v) {
+          try {
+            localStorage.setItem(k, JSON.stringify(v));
+          } catch (e) {
+            toast("Storage full — use smaller images");
+          }
+        },
+      };
+      const CATS = [
+        "Stilettos",
+        "Block heels",
+        "Strappy",
+        "Kitten heels",
+        "Platforms",
+        "Tote bags",
+        "Mini bags",
+        "Clutches",
+        "Crossbody bags",
+      ];
+      const HEEL_CATS = ["Stilettos", "Block heels", "Strappy", "Kitten heels", "Platforms"];
+      const BAG_CATS = ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"];
+      const COL = [
+        "#111",
+        "#e8d9c4",
+        "#b3261e",
+        "#c9a24a",
+        "#7a4a2b",
+        "#d9d9d9",
+        "#2b3a67",
+        "#f0b6c4",
+      ];
+      let P = [],
+        O = [],
+        S = { wa: "", email: "" },
+        CART = LS.get("hz_cart", []),
+        TOKEN = sessionStorage.getItem("hz_tok") || "";
+      const api = async (m, u, b) => {
+        const r = await fetch("/api/" + u, {
+          method: m,
+          headers: {
+            "Content-Type": "application/json",
+            ...(TOKEN ? { Authorization: "Bearer " + TOKEN } : {}),
+          },
+          body: b ? JSON.stringify(b) : undefined,
+        });
+        const j = await r.json().catch(() => ({}));
+        if (r.status == 401 && TOKEN) {
+          TOKEN = "";
+          sessionStorage.removeItem("hz_tok");
+          AUTH = false;
+          route();
+        }
+        if (!r.ok) throw new Error(j.error || "Something went wrong");
+        return j;
+      };
+      const save = () =>
+        api("PUT", "products", P)
+          .then((r) => {
+            P = r;
+          })
+          .catch((e) => {
+            toast(e.message);
+            throw e;
+          });
+      function heel(p, w) {
+        const c = p.color || "#111",
+          st = p.style || "stiletto";
+        const hl =
+          {
+            stiletto: '<path d="M141 98h12l-3 52h-3z"/>',
+            block: '<path d="M130 98h26l-2 50h-22z"/>',
+            kitten: '<path d="M138 98h14l-2 28h-8z"/>',
+            strappy: '<path d="M141 98h12l-3 52h-3z"/>',
+            platform: '<path d="M138 98h16l-2 42h-12z"/>',
+          }[st] || "";
+        const plat =
+          st === "platform"
+            ? '<rect x="14" y="118" width="74" height="12" rx="4"/>'
+            : "";
+        const strap =
+          st === "strappy"
+            ? '<path d="M60 104l22-22M90 100l14-30" stroke="#fff6" stroke-width="3" fill="none"/>'
+            : "";
+        return `<svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(p.name)}"><rect width="200" height="170" fill="${w ? "transparent" : "#f3f1ee"}"/><g fill="${c}" stroke="#0003" stroke-width="1"><path d="M18 118C30 100 60 100 84 104 100 80 118 48 132 40L146 42C142 60 140 80 152 98L128 102C100 112 60 120 18 118Z"/>${hl}${plat}</g>${strap}<path d="M40 108c20-6 40-4 50-2" stroke="#fff5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+      }
+      const img = (p) =>
+        p.imgs && p.imgs[0]
+          ? `<img src="${p.imgs[0]}" alt="${esc(p.name)}" loading="lazy">`
+          : heel(p);
+      const heroArt = () => {
+        const p = P.find((x) => x.imgs && x.imgs[0] && status(x) != "out");
+        return p
+          ? img(p)
+          : heel(
+              P[0] || { name: "Heel", color: "#111111", style: "stiletto" },
+              1,
+            );
+      };
+      const status = (p) =>
+        !p.avail || p.stock <= 0 ? "out" : p.stock <= 3 ? "low" : "ok";
+      function cardH(p) {
+        const s = status(p);
+        const kind = ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"].includes(p.cat) ? "Bag" : "Heel";
+        return `<div class="card ${s == "out" ? "na" : ""}" data-id="${p.id}" tabindex="0" role="button"><div class="im">${img(p)}</div><span class="tag">${kind}</span>${s == "out" ? '<span class="tag out" style="top:39px">Out of stock</span>' : s == "low" ? `<span class="tag low" style="top:39px">Only ${p.stock} left</span>` : ""}<div class="tx"><h3>${esc(p.name)}</h3><div class="price">${N(p.price)}</div></div></div>`;
+      }
+      const toast = (t) => {
+        const e = $("#toast");
+        e.textContent = t;
+        e.style.display = "block";
+        clearTimeout(e._t);
+        e._t = setTimeout(() => (e.style.display = "none"), 2600);
+      };
+      /* carousel */
+      function autoCar(el) {
+        if (!el) return;
+        let h = false;
+        el.onmouseenter = () => (h = true);
+        el.onmouseleave = () => (h = false);
+        el.ontouchstart = () => (h = true);
+        const id = setInterval(() => {
+          if (!document.body.contains(el)) return clearInterval(id);
+          if (h || matchMedia("(prefers-reduced-motion:reduce)").matches)
+            return;
+          const step = el.firstElementChild
+            ? el.firstElementChild.offsetWidth + 16
+            : 240;
+          if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4)
+            el.scrollTo({ left: 0 });
+          else el.scrollBy({ left: step });
+        }, 2800);
+        const b = el.parentElement?.querySelectorAll(".arr button");
+        if (b && b.length) {
+          b[0].onclick = () => el.scrollBy({ left: -240 });
+          b[1].onclick = () => el.scrollBy({ left: 240 });
+        }
+      }
+      const carH = (title, list, link) =>
+        `<section class="blk"><div class="wrap"><div class="sh"><h2>${title}</h2><div class="arr">${link ? `<a class="btn alt sm" href="${link}">View all</a>` : ""}<button aria-label="Previous">‹</button><button aria-label="Next">›</button></div></div><div class="car">${list.map(cardH).join("") || "<p>No products yet.</p>"}</div></div></section>`;
+      const homeCar = (title, list, link) =>
+        `<div class="wrap"><div class="sh"><h2>${title}</h2><div class="arr"><a class="btn alt sm" href="${link}">View all</a><button aria-label="Previous">‹</button><button aria-label="Next">›</button></div></div><div class="car">${list.map(cardH).join("") || "<p>No products yet.</p>"}</div></div>`;
+      /* pages */
+      function home() {
+        return (
+          `<div class="hero"><div class="wrap"><div><h1>Heels that <i>Elevate</i> Your Look</h1><p>Premium ladies heels designed to make you feel fiercer, feel confident, and stand out.</p><a class="btn" href="#shop">Shop Collection</a></div><div class="art">${heroArt()}</div></div></div>
+<div class="wrap perks"><div><b>Delivery across Nigeria</b>Fee confirmed on WhatsApp</div><div><b>Confirm before you pay</b>We message you first</div><div><b>Live stock</b>Availability shown on every pair</div><div><b>Chat with us</b>Questions answered on WhatsApp</div></div>
+<section class="blk"><div class="wrap"><div class="sh"><h2>Shop by category</h2></div><div class="cats">${CATS.map(
+            (c) => {
+              const p = P.find((x) => x.cat == c);
+              return `<button class="cat" data-cat="${c}">${p ? heel(p, 1) : ""}${c}</button>`;
+            },
+          ).join("")}</div></div></section>` +
+          carH("Featured collection", P, "#shop") +
+          `<div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop Now</a></div>
+<section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`
+        );
+      }
+      function shop(f) {
+        const list = f ? P.filter((p) => p.cat == f) : P;
+        return (
+          `<div class="wrap" style="padding-top:30px"><h1 style="font-size:40px">Shop${f ? " — " + esc(f) : ""}</h1><p style="color:var(--mute)">${list.length} styles, ${list.filter((p) => status(p) != "out").length} available now. Tap any pair for price, sizes and availability.${f ? ' <a href="#shop"><u>Show all</u></a>' : ""}</p></div>` +
+          carH("All heels", list) +
+          (f
+            ? ""
+            : CATS.filter((c) => P.some((p) => p.cat == c))
+                .map((c) =>
+                  carH(
+                    c,
+                    P.filter((p) => p.cat == c),
+                  ),
+                )
+                .join(""))
+        );
+      }
+
+      /* Boutique home and shop views. Products here are the exact records edited in Admin. */
+      function home() {
+        const isBag = (p) => ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"].includes(p.cat);
+        const heels = P.filter((p) => !isBag(p)), bags = P.filter(isBag), hero = heels.find((p) => p.imgs?.[0]) || P[0];
+        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The new edit · Lagos, Nigeria</div><h1>Heels that <i>Elevate</i> every entrance.</h1><p>Considered heels and beautiful bags for the woman whose style speaks before she does.</p><a class="btn" href="#shop">Shop the collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#shop">New arrivals</a></div></div><div class="art">${hero ? img(hero) : ""}</div></div></div><div class="wrap perks"><div><b>Nationwide delivery</b>Across Nigeria, with care</div><div><b>Curated quality</b>Every piece selected for you</div><div><b>Live availability</b>See stock before you order</div><div><b>Personal service</b>Chat with us on WhatsApp</div></div><section class="blk"><div class="wrap"><div class="sh"><h2>Shop by category</h2></div><div class="cats">${CATS.map((c) => { const p = P.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section>` + carH("The heel edit", heels.slice(0, 18), "#shop") + `<section class="blk"><div class="wrap editorial"><div class="feature">${bags[0] ? img(bags[0]) : ""}</div><div class="copy"><div class="eyebrow">The finishing touch</div><h2>Meet the bag collection.</h2><p style="margin:14px 0 24px;color:var(--mute)">Structured, chic and ready to go wherever the night takes you.</p><a class="btn" href="#shop/Tote%20bags">Shop bags</a></div></div></section>` + carH("Bags to be seen with", bags.slice(0, 18), "#shop/Tote%20bags") + `<div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
+      }
+      function shop(f) {
+        const list = f ? P.filter((p) => p.cat == f) : P, isBag = (p) => ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"].includes(p.cat), heels = list.filter((p) => !isBag(p)), bags = list.filter(isBag);
+        return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">24 Heelz NG · The boutique</div><h1 style="font-size:52px">Shop${f ? " — " + esc(f) : ""}</h1><p style="color:var(--mute)">${list.length} handpicked styles, ${list.filter((p) => status(p) != "out").length} available now. Tap any piece for price, sizes and availability.${f ? ' <a href="#shop"><u>Show all</u></a>' : ""}</p><div class="collection-tabs"><a href="#shop">All pieces</a><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a></div></div>` + (f ? carH(f, list) : carH("New in heels", heels)) + (!f && bags.length ? carH("The bag boutique", bags) : "") + (f ? "" : CATS.filter((c) => P.some((p) => p.cat == c)).map((c) => carH(c, P.filter((p) => p.cat == c))).join(""));
+      }
+
+      /* Compact home layout: two independent auto-scrolling catalogue rows. */
+      function home() {
+        const isBag = (p) => BAG_CATS.includes(p.cat);
+        const heels = P.filter((p) => !isBag(p));
+        const bags = P.filter(isBag);
+        const heroHeel = heels.find((p) => p.imgs?.[0]) || heels[0];
+        const heroBag = bags.find((p) => p.imgs?.[0]) || bags[0];
+        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The heel & handbag edit</div><h1>Heels that <i>Elevate</i> your look.</h1><p>Statement heels and ladies' handbags, selected to make every entrance unforgettable.</p><a class="btn" href="#shop">Shop collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Shop heels</a><a href="#shop/Tote%20bags">Shop handbags</a></div></div><div class="art"><div class="hero-shoe">${heroHeel ? img(heroHeel) : ""}</div><div class="hero-bag">${heroBag ? img(heroBag) : ""}</div></div></div></div><div class="wrap perks"><div><b>Fast delivery</b>Across Nigeria</div><div><b>Secure payment</b>Confirmed first</div><div><b>Premium quality</b>Curated pieces</div><div><b>24/7 support</b>WhatsApp us</div></div><section class="blk home-categories"><div class="wrap"><div class="sh"><h2>Shop heel category</h2></div><div class="cats">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="home-catalogue">${homeCar("Featured heels", heels.slice(0, 15), "#shop")}${homeCar("Ladies' handbags", bags.slice(0, 15), "#shop/Tote%20bags")}</section><div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
+      }
+
+      /* Fashion boutique home: curated, editorial and inventory-driven. */
+      /* Superseded homepage layout kept here temporarily for reference.
+      function home() {
+        const isBag = (p) => BAG_CATS.includes(p.cat), heels = P.filter((p) => !isBag(p)), bags = P.filter(isBag);
+        const story = bags[7] || bags[0];
+        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${main ? img(main) : ""}</div><div class="visual-float">${bag ? img(bag) : ""}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Confirmed on WhatsApp</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p=heels.find((x)=>x.cat===c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section><section class="fashion-section" style="padding-top:0"><div class="wrap"><div class="section-kicker">Shop with confidence</div><h2 class="section-title" style="margin-bottom:28px">The 24 Heelz experience.</h2><div class="service-grid"><article class="service-card"><span>01</span><b>Chosen with intention</b><p>Every heel and handbag is selected for a polished silhouette, memorable finish and confident styling.</p></article><article class="service-card"><span>02</span><b>Fit help before you buy</b><p>Use the size guide or speak with us on WhatsApp before placing your order.</p></article><article class="service-card"><span>03</span><b>Real people, real support</b><p>We personally confirm product availability, delivery and payment before an order is finalised.</p></article></div></div></section><section class="journal"><div class="section-kicker" style="color:#f3bfce">The 24 Heelz journal</div><h2>Style begins with the details.</h2><p>Read the lookbook for event-ready styling inspiration, gift ideas and the pieces we are loving now.</p><a class="btn" href="#lookbook">Open the lookbook</a></section>`;
+      }
+
+      */
+      function home() {
+        const isBag = (p) => BAG_CATS.includes(p.cat);
+        const heels = P.filter((p) => !isBag(p));
+        const bags = P.filter(isBag);
+        const story = bags[7] || bags[0];
+        const heroImage = '<img src="/assets/Glamorous%20Red%20Couture%20with%20Handbag.png" alt="Glamorous red couture with handbag" fetchpriority="high">';
+        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${heroImage}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Confirmed on WhatsApp</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat === c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section>`;
+      }
+
+      const par = (x) =>
+        String(x || "")
+          .split(/\n+/)
+          .filter(Boolean)
+          .map((l) => `<p>${esc(l)}</p>`)
+          .join("");
+      const page = (h, b) => `<div class="wrap page"><h1>${h}</h1>${b}</div>`;
+      const steps = () =>
+        `<div class="steps"><div><b>1. Pick your pairs</b>Open any pair to see its price, sizes and how many are left.</div><div><b>2. Press ORDER NOW</b>Enter your name, WhatsApp number, email and delivery address.</div><div><b>3. We confirm on WhatsApp</b>We confirm availability, delivery fee and payment with you.</div></div>`;
+      function newIn() {
+        return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Freshly curated</div><h1 style="font-size:52px">New in</h1><p style="color:var(--mute);max-width:58ch">The latest heel and handbag arrivals, chosen to make an occasion of every outfit.</p></div>` + carH("Just landed", P.slice(0, 30), "#shop") + `<section class="blk"><div class="wrap"><div class="cgrid"><div><b>Need a second opinion?</b><p>Send us a photo of your outfit on WhatsApp and we will help you choose the right finish.</p></div><div><b>Always current</b><p>Availability is managed live in our boutique. Once a piece is gone, it is marked unavailable.</p></div></div></div></section>`;
+      }
+      function lookbook() {
+        const picks = P.filter((p) => p.imgs?.[0]).slice(0, 6);
+        return `<div class="wrap page" style="max-width:1180px"><div class="eyebrow">The 24 Heelz journal</div><h1>Style it your way.</h1><p>From RSVP-ready shine to polished everyday pieces, build a look that feels entirely like you.</p><div class="editorial" style="margin:28px 0"><div class="feature">${picks[1] ? img(picks[1]) : ""}</div><div class="copy"><h2>From day plans to after-dark.</h2><p style="margin:12px 0 22px">A refined bag grounds a dramatic heel. Match tones, then let the silhouette do the talking.</p><a class="btn" href="#shop">Shop the edit</a></div></div><div class="cats">${picks.map((p) => `<button class="cat" data-cat="${p.cat}">${img(p)}<span>${esc(p.cat)}</span></button>`).join("")}</div><h2>Our styling notes</h2><div class="steps"><div><b>Make one piece the statement</b>Choose a sculptural heel or a standout bag, then keep the rest beautifully simple.</div><div><b>Think in textures</b>Satin, metallic and patent finishes instantly create a more considered evening look.</div><div><b>Comfort is part of the look</b>Use the size guide and ask us about fit before you order for a confident step.</div></div></div>`;
+      }
+      function giftGuide() {
+        return page("The gift guide", `<p>Give a beautiful piece she will reach for again and again. Our edit includes versatile handbags and event-ready heels for birthdays, weddings and thoughtful just-because moments.</p><div class="cgrid"><div><b>For the minimalist</b><p>Choose a black, nude or cocoa bag with a clean, structured silhouette.</p></div><div><b>For the celebrant</b><p>Choose metallic heels, soft satin finishes or a compact statement clutch.</p></div><div><b>For the everyday muse</b><p>A comfortable block heel or elegant mini bag always earns its place.</p></div><div><b>Need help?</b><p>Tell us her style, size and your budget on WhatsApp for a personal recommendation.</p></div></div><p style="margin-top:22px"><a class="btn" href="#shop">Shop gifts</a> <a class="btn alt" href="#contact">Ask for a recommendation</a></p>`);
+      }
+      function about() {
+        return page(
+          "About 24 Heelz NG",
+          par(S.about) +
+            `<h2>What we sell</h2><p>${CATS.join(", ")}. Right now there are ${P.length} styles in the shop and ${P.filter((p) => status(p) != "out").length} are available to order.</p><h2>How ordering works</h2>${steps()}<p style="margin-top:20px"><a class="btn" href="#shop">Shop heels</a> <a class="btn alt" href="#contact">Contact us</a></p>`,
+        );
+      }
+      function delivery() {
+        return page(
+          "Delivery & returns",
+          "<h2>Delivery</h2>" +
+            par(S.delivery) +
+            "<h2>Returns and exchanges</h2>" +
+            par(S.returns) +
+            "<h2>Payment</h2>" +
+            par(S.payment) +
+            "<h2>How ordering works</h2>" +
+            steps(),
+        );
+      }
+      function sizes() {
+        const r = [
+          [36, 22.8],
+          [37, 23.5],
+          [38, 24.1],
+          [39, 24.8],
+          [40, 25.4],
+          [41, 26.0],
+        ];
+        return page(
+          "Size guide",
+          `<p>Sizes are EU sizes. Stand on a sheet of paper, mark your heel and your longest toe, then measure the distance in cm. If you are between two sizes, choose the larger one.</p><table class="sz"><tr><th>EU size</th><th>Foot length (cm)</th></tr>${r.map((x) => `<tr><td>${x[0]}</td><td>${x[1].toFixed(1)}</td></tr>`).join("")}</table><p class="mut">Measurements are approximate and fit can vary by style. Not sure? Message us on WhatsApp before you order.</p><a class="btn" href="#shop">Shop heels</a>`,
+        );
+      }
+      function faq() {
+        const q = [
+          [
+            "How do I place an order?",
+            "Open a pair, choose your size and press Select this pair. When you have everything you want, press ORDER NOW, fill in your details and send the order on WhatsApp.",
+          ],
+          [
+            "Do I need an account?",
+            "No. We only need your name, WhatsApp number, email and delivery address.",
+          ],
+          [
+            "How do I know if a pair is available?",
+            "Every pair shows whether it is available and how many are left. Pairs that are out of stock cannot be selected.",
+          ],
+          ["How and when do I pay?", S.payment],
+          ["How long does delivery take?", S.delivery],
+          ["Can I return or exchange a pair?", S.returns],
+          [
+            "Which size should I choose?",
+            "Use our size guide (EU sizes). If you are between sizes, choose the larger one.",
+          ],
+        ];
+        return page(
+          "Frequently asked questions",
+          q
+            .map(
+              (a) =>
+                `<details><summary>${esc(a[0])}</summary>${par(a[1])}</details>`,
+            )
+            .join("") +
+            '<p style="margin-top:20px">Still need help? <a href="#contact"><u>Contact us</u></a>.</p>',
+        );
+      }
+      function contact() {
+        const rows = [
+          [
+            "WhatsApp",
+            `<a href="https://wa.me/${esc(S.wa)}" target="_blank" rel="noopener"><u>+${esc(S.wa)}</u></a>`,
+          ],
+          S.phone && [
+            "Phone",
+            `<a href="tel:${esc(S.phone)}"><u>${esc(S.phone)}</u></a>`,
+          ],
+          [
+            "Email",
+            `<a href="mailto:${esc(S.email)}"><u>${esc(S.email)}</u></a>`,
+          ],
+          S.address && ["Address", esc(S.address)],
+          S.hours && ["Opening hours", esc(S.hours)],
+          S.insta && ["Instagram", esc(S.insta)],
+        ].filter(Boolean);
+        return page(
+          "Contact us",
+          `<p>Message us on WhatsApp for sizes, availability, delivery fees or help with an order.</p><div class="cgrid">${rows.map((r) => `<div><b>${r[0]}</b>${r[1]}</div>`).join("")}</div><h2>Send us a message</h2><form id="cf" style="max-width:460px"><label>Your name</label><input name="n" required><label>Message</label><textarea name="m" rows="4" required></textarea><button class="btn" style="margin-top:14px">Send on WhatsApp</button></form>`,
+        );
+      }
+      const bindContact = () => {
+        $("#cf").onsubmit = (e) => {
+          e.preventDefault();
+          const f = Object.fromEntries(new FormData(e.target));
+          window.open(
+            "https://wa.me/" +
+              S.wa +
+              "?text=" +
+              encodeURIComponent(
+                "Hello 24 Heelz NG, I am " + f.n + ".\n" + f.m,
+              ),
+            "_blank",
+          );
+        };
+      };
+      const TT = {
+        home: "24 Heelz NG — Quality heels delivered across Nigeria",
+        shop: "Shop heels — 24 Heelz NG",
+        about: "About — 24 Heelz NG",
+        delivery: "Delivery & returns — 24 Heelz NG",
+        sizes: "Size guide — 24 Heelz NG",
+        faq: "FAQ — 24 Heelz NG",
+        contact: "Contact — 24 Heelz NG",
+        admin: "Admin — 24 Heelz NG",
+      };
+      function setMeta(pg) {
+        document.title = TT[pg] || TT.home;
+        const m = $("meta[name=description]");
+        if (m)
+          m.content =
+            (TT[pg] || TT.home) +
+            ". Stilettos, block heels, strappy sandals, kitten heels and platforms.";
+        $("#ft").innerHTML =
+          `<div class="fl"><b>Shop</b><a href="#shop">All products</a><a href="#new">New in</a><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#gifts">Gift guide</a></div><div class="fl"><b>Help</b><a href="#sizes">Size guide</a><a href="#delivery">Delivery &amp; returns</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div><div class="fl"><b>Contact</b><a href="https://wa.me/${esc(S.wa)}" target="_blank" rel="noopener">WhatsApp +${esc(S.wa)}</a>${S.phone ? `<span>${esc(S.phone)}</span>` : ""}<a href="mailto:${esc(S.email)}">${esc(S.email)}</a>${S.address ? `<span>${esc(S.address)}</span>` : ""}${S.hours ? `<span>${esc(S.hours)}</span>` : ""}${S.insta ? `<span>${esc(S.insta)}</span>` : ""}</div>`;
+        const w = $("#wab");
+        w.href = "https://wa.me/" + S.wa;
+        w.style.display = pg == "admin" ? "none" : "";
+      }
+      /* product modal */
+      let selSize = null;
+      function openP(id) {
+        const p = P.find((x) => x.id == id);
+        if (!p) return;
+        const s = status(p),
+          sz = (p.sizes || "")
+            .split(",")
+            .map((x) => x.trim())
+            .filter(Boolean),
+          im = p.imgs || [];
+        selSize = sz[0] || "";
+        const det = [
+          ["Category", p.cat],
+          [BAG_CATS.includes(p.cat) ? "Bag type" : "Heel height", p.heel],
+          ["Material", p.material],
+          ["Colours", p.colors],
+          [BAG_CATS.includes(p.cat) ? "Size" : "Sizes (EU)", p.sizes],
+        ].filter((x) => x[1]);
+        $("#modal").innerHTML =
+          `<button class="x" aria-label="Close">×</button><div class="pd"><div><div class="im" id="mainIm">${img(p)}</div>${im.length > 1 ? `<div class="thumbs">${im.map((u, i) => `<button data-th="${i}" class="${i ? "" : "on"}" aria-label="Photo ${i + 1}"><img src="${u}" alt=""></button>`).join("")}</div>` : ""}</div><div><h2>${esc(p.name)}</h2><p class="price" style="font-size:26px;margin:8px 0">${N(p.price)}</p><p class="st ${s == "out" ? "no" : "ok"}">${s == "out" ? "Not available" : s == "low" ? `Available — only ${p.stock} left` : `Available — ${p.stock} in stock`}</p><p style="margin:12px 0">${esc(p.desc)}</p><dl class="det">${det.map((d) => `<dt>${d[0]}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl><b>Size</b><div class="sizes">${sz.map((z, i) => `<button class="${i ? "" : "on"}" data-sz="${esc(z)}">${esc(z)}</button>`).join("")}</div><button class="btn" id="addB" ${s == "out" ? "disabled" : ""}>${s == "out" ? "Out of stock" : "Select this pair"}</button><p class="mut" style="margin-top:12px">Delivery fee is confirmed on WhatsApp. <a href="#delivery" onclick="closeM()"><u>Delivery &amp; returns</u></a> · <a href="#sizes" onclick="closeM()"><u>Size guide</u></a></p></div></div>`;
+        $("#ov").classList.add("show");
+        $("#modal .x").onclick = closeM;
+        $("#modal")
+          .querySelectorAll("[data-th]")
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                $("#mainIm").innerHTML =
+                  `<img src="${im[b.dataset.th]}" alt="${esc(p.name)}">`;
+                $("#modal")
+                  .querySelectorAll("[data-th]")
+                  .forEach((x) => x.classList.toggle("on", x == b));
+              }),
+          );
+        $("#modal")
+          .querySelectorAll("[data-sz]")
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                selSize = b.dataset.sz;
+                $("#modal")
+                  .querySelectorAll("[data-sz]")
+                  .forEach((x) => x.classList.toggle("on", x == b));
+              }),
+          );
+        $("#addB").onclick = () => {
+          addCart(p.id, selSize);
+          closeM();
+        };
+      }
+      const closeM = () => $("#ov").classList.remove("show");
+      $("#ov").onclick = (e) => {
+        if (e.target.id == "ov") closeM();
+      };
+      document.onkeydown = (e) => {
+        if (e.key == "Escape") closeM();
+      };
+      /* cart */
+      function addCart(id, size) {
+        const x = CART.find((c) => c.id == id && c.size == size);
+        if (x) x.qty++;
+        else CART.push({ id, size, qty: 1 });
+        LS.set("hz_cart", CART);
+        cartUI();
+        toast("Added. Select more or press ORDER NOW.");
+      }
+      function cartUI() {
+        CART = CART.filter((c) => P.find((p) => p.id == c.id));
+        const n = CART.reduce((a, c) => a + c.qty, 0),
+          t = CART.reduce(
+            (a, c) => a + c.qty * P.find((p) => p.id == c.id).price,
+            0,
+          );
+        $("#cc").textContent = n;
+        $("#bar").classList.toggle(
+          "show",
+          n > 0 && !location.hash.startsWith("#admin"),
+        );
+        $("#barTxt").textContent =
+          `${n} pair${n > 1 ? "s" : ""} selected · ${N(t)}`;
+      }
+      function openCart() {
+        if (!CART.length) {
+          toast("Nothing selected yet.");
+          return;
+        }
+        $("#modal").innerHTML =
+          `<button class="x" aria-label="Close">×</button><h2>Your selection</h2>${CART.map(
+            (c, i) => {
+              const p = P.find((x) => x.id == c.id);
+              return `<div class="row"><div class="th">${img(p)}</div><div style="flex:1"><b>${esc(p.name)}</b><br>Size ${esc(c.size)} · ${N(p.price)}</div><button data-d="${i}" class="btn alt sm">−</button><b>${c.qty}</b><button data-u="${i}" class="btn alt sm">+</button></div>`;
+            },
+          ).join("")}
+<h3 style="margin:18px 0 4px">Your details</h3><form id="of"><div class="grid2"><div><label>Full name *</label><input name="name" required></div><div><label>WhatsApp number *</label><input name="wa" required placeholder="e.g. 0803 000 0000" inputmode="tel" pattern="(0[789][0-9]{9}|234[789][0-9]{9})"></div><div><label>Email (optional)</label><input name="email" type="email"></div><div><label>City / State *</label><input name="city" required></div></div><label>Delivery address *</label><textarea name="addr" rows="2" required></textarea><label>Note (colour, extra size, etc.)</label><input name="note"><button class="order-btn" style="margin-top:16px;width:100%">Place order via WhatsApp</button></form>`;
+        $("#ov").classList.add("show");
+        $("#modal .x").onclick = closeM;
+        $("#modal")
+          .querySelectorAll("[data-d]")
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                const c = CART[b.dataset.d];
+                if (--c.qty <= 0) CART.splice(b.dataset.d, 1);
+                LS.set("hz_cart", CART);
+                cartUI();
+                CART.length ? openCart() : closeM();
+              }),
+          );
+        $("#modal")
+          .querySelectorAll("[data-u]")
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                CART[b.dataset.u].qty++;
+                LS.set("hz_cart", CART);
+                cartUI();
+                openCart();
+              }),
+          );
+        $("#of").onsubmit = (e) => {
+          e.preventDefault();
+          placeOrder(Object.fromEntries(new FormData(e.target)));
+        };
+      }
+      let placing = false;
+      async function placeOrder(f) {
+        if (placing) return;
+        placing = true;
+        let o;
+        try {
+          o = await api("POST", "orders", {
+            ...f,
+            items: CART.map((c) => ({ id: c.id, size: c.size, qty: c.qty })),
+          });
+        } catch (e) {
+          placing = false;
+          return toast(e.message);
+        }
+        placing = false;
+        const items = o.items,
+          total = o.total;
+        const msg = `NEW ORDER ${o.id}\nName: ${o.name}\nWhatsApp: ${o.wa}\nEmail: ${o.email}\nCity: ${o.city}\nAddress: ${o.addr}\nNote: ${o.note || "-"}\n\nItems:\n${items.map((i) => `- ${i.name} (size ${i.size}) x${i.qty} = ${N(i.qty * i.price)}`).join("\n")}\n\nTotal: ${N(total)}`;
+        const wa = `https://wa.me/${S.wa}?text=${encodeURIComponent(msg)}`,
+          mail = `mailto:${S.email}?subject=${encodeURIComponent("New order " + o.id)}&body=${encodeURIComponent(msg)}`;
+        CART = [];
+        LS.set("hz_cart", CART);
+        cartUI();
+        $("#modal").innerHTML =
+          `<button class="x" aria-label="Close">×</button><h2>Order ${o.id} received</h2><p style="margin:10px 0">Last step: send your order to us so we can confirm it.</p><a class="btn" style="display:block;text-align:center;margin-bottom:10px" href="${wa}" target="_blank" rel="noopener">Send on WhatsApp</a><a class="btn alt" style="display:block;text-align:center" href="${mail}">Send by email</a>`;
+        $("#modal .x").onclick = closeM;
+        window.open(wa, "_blank");
+      }
+      /* admin */
+      let AUTH = !!TOKEN,
+        TAB = "orders";
+      function admin() {
+        if (!AUTH)
+          return `<div class="wrap" style="max-width:380px;padding:60px 20px"><h1>Admin login</h1><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in</button></form></div>`;
+        return `<div class="wrap adm"><div class="sh"><h1>Dashboard</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${O.filter((o) => o.status == "New").length} new)` : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
+      }
+      function tab() {
+        const tb = $("#tb");
+        if (!tb) return;
+        if (TAB == "orders")
+          tb.innerHTML = O.length
+            ? O.map(
+                (o, i) =>
+                  `<div class="ord"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${o.id}</b><span>${esc(o.date)}</span><span class="pill">${esc(o.status)}</span></div><p><b>${esc(o.name)}</b> · WhatsApp <a href="https://wa.me/${esc(String(o.wa).replace(/\D/g, "").replace(/^0/, "234"))}" target="_blank"><u>${esc(o.wa)}</u></a> · ${esc(o.email)}</p><p>${esc(o.city)} — ${esc(o.addr)}</p><p>${o.items.map((x) => `${esc(x.name)} (size ${esc(x.size)}) ×${x.qty}`).join("; ")}</p>${o.note ? `<p>Note: ${esc(o.note)}</p>` : ""}<p class="price">Total ${N(o.total)}</p><button class="btn alt sm" data-st="${i}">Mark ${o.status == "New" ? "confirmed" : o.status == "Confirmed" ? "delivered" : "new"}</button> <button class="btn alt sm" data-do="${i}">Delete</button></div>`,
+              ).join("")
+            : "<p>No orders yet. New orders placed on this browser appear here.</p>";
+        if (TAB == "products") {
+          tb.innerHTML =
+            `<button class="btn sm" id="np">+ Add product</button> <label class="btn alt sm" style="display:inline-block">Add from photos<input type="file" id="bulk" accept="image/*" multiple hidden></label> <button class="btn alt sm" id="clr">Delete all products</button><p class="mut" style="margin:8px 0">“Add from photos” makes one product per photo. Open each one to set its name, price and availability.</p>` +
+            P.map(
+              (p) =>
+                `<div class="row"><div class="th">${img(p)}</div><div style="flex:1"><b>${esc(p.name)}</b><br>${N(p.price)} · stock ${p.stock} · <span class="st ${status(p) == "out" ? "no" : "ok"}">${status(p) == "out" ? "Unavailable" : "Available"}</span></div><button class="btn alt sm" data-e="${p.id}">Edit</button></div>`,
+            ).join("");
+          $("#bulk").onchange = bulkAdd;
+        }
+        if (TAB == "settings")
+          tb.innerHTML = `<form id="sf" style="max-width:640px"><div class="grid2"><div><label>Admin WhatsApp (country code, no +)</label><input name="wa" value="${esc(S.wa)}"></div><div><label>Admin / shop email</label><input name="email" value="${esc(S.email)}"></div><div><label>Phone (shown on Contact page)</label><input name="phone" value="${esc(S.phone)}"></div><div><label>Instagram handle</label><input name="insta" value="${esc(S.insta)}"></div><div><label>Shop address</label><input name="address" value="${esc(S.address)}"></div><div><label>Opening hours</label><input name="hours" value="${esc(S.hours)}"></div></div><label>About text</label><textarea name="about" rows="4">${esc(S.about)}</textarea><label>Delivery information</label><textarea name="delivery" rows="3">${esc(S.delivery)}</textarea><label>Returns and exchanges</label><textarea name="returns" rows="3">${esc(S.returns)}</textarea><label>Payment information</label><textarea name="payment" rows="2">${esc(S.payment)}</textarea><div class="grid2"><div><label>Login username</label><input name="user" value="${esc(S.user)}"></div><div><label>New password</label><input name="pass" type="password" placeholder="Leave blank to keep current" autocomplete="new-password"></div></div><button class="btn" style="margin-top:14px">Save settingsSave settings</button></form>`;
+      }
+      async function upload(file) {
+        return (await api("POST", "upload", { data: await shrink(file) })).url;
+      }
+      async function bulkAdd(e) {
+        const fs = [...e.target.files];
+        if (!fs.length) return;
+        toast("Uploading " + fs.length + " photo(s)…");
+        let n = 0;
+        for (const f of fs) {
+          try {
+            const u = await upload(f);
+            P.unshift({
+              id: "p" + Date.now() + n++,
+              name: f.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+              cat: CATS[0],
+              price: 0,
+              stock: 1,
+              avail: false,
+              color: "#111111",
+              style: "stiletto",
+              sizes: "36,37,38,39,40,41",
+              desc: "",
+              heel: "",
+              material: "",
+              colors: "",
+              imgs: [u],
+            });
+          } catch (x) {
+            toast(x.message);
+          }
+        }
+        try {
+          await save();
+          tab();
+          toast(n + " product(s) added. Set price and availability for each.");
+        } catch (x) {}
+      }
+      function editP(id) {
+        const p = id
+          ? P.find((x) => x.id == id)
+          : {
+              id: "p" + Date.now(),
+              name: "",
+              cat: CATS[0],
+              price: 0,
+              stock: 1,
+              avail: true,
+              color: "#111111",
+              style: "stiletto",
+              sizes: "36,37,38,39,40,41",
+              desc: "",
+              heel: "",
+              material: "",
+              colors: "",
+              imgs: [],
+              _new: 1,
+            };
+        let imgs = [...(p.imgs || [])];
+        $("#modal").innerHTML =
+          `<button class="x" aria-label="Close">×</button><h2>${id ? "Edit" : "Add"} product</h2><form id="pf"><div class="grid2"><div><label>Name</label><input name="name" value="${esc(p.name)}" required></div><div><label>Category</label><select name="cat">${CATS.map((c) => `<option ${c == p.cat ? "selected" : ""}>${c}</option>`).join("")}</select></div><div><label>Price (₦)</label><input name="price" type="number" min="0" value="${p.price}" required></div><div><label>Number in stock</label><input name="stock" type="number" min="0" value="${p.stock}" required></div><div><label>Availability</label><select name="avail"><option value="1" ${p.avail ? "selected" : ""}>Available</option><option value="0" ${p.avail ? "" : "selected"}>Not available</option></select></div><div><label>Sizes (comma separated)</label><input name="sizes" value="${esc(p.sizes)}"></div><div><label>Heel height</label><input name="heel" value="${esc(p.heel)}" placeholder="e.g. 8 cm"></div><div><label>Material</label><input name="material" value="${esc(p.material)}" placeholder="e.g. Leather"></div><div><label>Colours</label><input name="colors" value="${esc(p.colors)}"></div><div><label>Drawing style (only if no photo)</label><select name="style">${["stiletto", "block", "kitten", "strappy", "platform"].map((c) => `<option ${c == p.style ? "selected" : ""}>${c}</option>`).join("")}</select></div></div><input name="color" type="hidden" value="${p.color}"><label>Description</label><textarea name="desc" rows="3">${esc(p.desc)}</textarea><label>Photos (first photo is the main one; click a photo to make it main)</label><div id="ph"></div><input type="file" id="fi" accept="image/*" multiple><button class="btn" style="margin-top:16px">Save product</button> ${id ? '<button type="button" class="btn alt" id="dp">Delete</button>' : ""}</form>`;
+        const ph = () => {
+          $("#ph").innerHTML =
+            imgs
+              .map(
+                (u, i) =>
+                  `<span class="thm ${i ? "" : "main"}"><img src="${u}" alt="Photo ${i + 1}" data-mk="${i}"><button type="button" data-rm="${i}" aria-label="Remove photo">×</button></span>`,
+              )
+              .join("") ||
+            '<p class="mut">No photos yet. A drawing is shown until you add one.</p>';
+        };
+        ph();
+        $("#ph").onclick = (e) => {
+          const t = e.target;
+          if (t.dataset.rm !== undefined) {
+            imgs.splice(t.dataset.rm, 1);
+            ph();
+          }
+          if (t.dataset.mk !== undefined) {
+            imgs.unshift(imgs.splice(t.dataset.mk, 1)[0]);
+            ph();
+          }
+        };
+        $("#fi").onchange = async (e) => {
+          toast("Uploading…");
+          for (const f of e.target.files) {
+            try {
+              imgs.push(await upload(f));
+            } catch (x) {
+              toast(x.message);
+            }
+          }
+          ph();
+          toast("Photos added. Press Save product.");
+        };
+        $("#ov").classList.add("show");
+        $("#modal .x").onclick = closeM;
+        $("#pf").onsubmit = async (e) => {
+          e.preventDefault();
+          const f = Object.fromEntries(new FormData(e.target));
+          Object.assign(p, {
+            name: f.name,
+            cat: f.cat,
+            price: +f.price,
+            stock: +f.stock,
+            avail: f.avail == "1",
+            sizes: f.sizes,
+            style: f.style,
+            color: f.color,
+            desc: f.desc,
+            heel: f.heel,
+            material: f.material,
+            colors: f.colors,
+            imgs,
+          });
+          if (p._new) {
+            delete p._new;
+            P.unshift(p);
+          }
+          try {
+            await save();
+          } catch (x) {
+            return;
+          }
+          closeM();
+          tab();
+          toast("Saved");
+        };
+        if (id)
+          $("#dp").onclick = () => {
+            if (confirm("Delete this product?")) {
+              P = P.filter((x) => x.id != id);
+              save()
+                .then(() => {
+                  closeM();
+                  tab();
+                })
+                .catch(() => {});
+            }
+          };
+      }
+      function shrink(file) {
+        return new Promise((r) => {
+          const i = new Image();
+          i.onload = () => {
+            const m = 1000,
+              k = Math.min(1, m / Math.max(i.width, i.height)),
+              c = document.createElement("canvas");
+            c.width = i.width * k;
+            c.height = i.height * k;
+            c.getContext("2d").drawImage(i, 0, 0, c.width, c.height);
+            r(c.toDataURL("image/jpeg", 0.85));
+          };
+          i.src = URL.createObjectURL(file);
+        });
+      }
+      function bindAdmin() {
+        const lf = $("#lf");
+        if (lf)
+          lf.onsubmit = async (e) => {
+            e.preventDefault();
+            const f = Object.fromEntries(new FormData(lf));
+            try {
+              const r = await api("POST", "login", { u: f.u, p: f.p });
+              TOKEN = r.token;
+              sessionStorage.setItem("hz_tok", TOKEN);
+              AUTH = true;
+              route();
+            } catch (x) {
+              toast(x.message);
+            }
+          };
+        if (!AUTH) return;
+        $("#lo").onclick = () => {
+          AUTH = false;
+          TOKEN = "";
+          sessionStorage.removeItem("hz_tok");
+          route();
+        };
+        document.querySelectorAll("[data-t]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              TAB = b.dataset.t;
+              route();
+            }),
+        );
+        tab();
+        $("#tb").onclick = async (e) => {
+          const t = e.target;
+          if (t.id == "np") editP();
+          if (
+            t.id == "clr" &&
+            confirm("Delete ALL products? Orders are kept.")
+          ) {
+            P = [];
+            try {
+              await save();
+              tab();
+            } catch (x) {}
+          }
+          if (t.dataset.e) editP(t.dataset.e);
+          if (t.dataset.st !== undefined) {
+            const o = O[t.dataset.st];
+            try {
+              await api("PATCH", "orders/" + o.id, {
+                status:
+                  o.status == "New"
+                    ? "Confirmed"
+                    : o.status == "Confirmed"
+                      ? "Delivered"
+                      : "New",
+              });
+              route();
+            } catch (x) {
+              toast(x.message);
+            }
+          }
+          if (t.dataset.do !== undefined && confirm("Delete this order?")) {
+            try {
+              await api("DELETE", "orders/" + O[t.dataset.do].id);
+              route();
+            } catch (x) {
+              toast(x.message);
+            }
+          }
+        };
+        const sf = $("#sf");
+        if (sf)
+          sf.onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+              S = await api(
+                "PUT",
+                "settings",
+                Object.fromEntries(new FormData(sf)),
+              );
+              toast("Settings saved");
+            } catch (x) {
+              toast(x.message);
+            }
+          };
+      }
+      /* router */
+      async function route() {
+        const h = location.hash.slice(1) || "home",
+          [pg, arg] = h.split("/");
+        if (pg == "admin" && AUTH) {
+          try {
+            [O, P, S] = await Promise.all([
+              api("GET", "orders"),
+              api("GET", "products"),
+              api("GET", "settings"),
+            ]);
+          } catch (e) {}
+        }
+        $("#app").innerHTML = (
+          {
+            home,
+            shop: () => shop(arg && decodeURIComponent(arg)),
+            new: newIn,
+            lookbook,
+            gifts: giftGuide,
+            about,
+            delivery,
+            sizes,
+            faq,
+            contact,
+            admin,
+          }[pg] || home
+        )();
+        setMeta(pg);
+        document
+          .querySelectorAll(".nav nav a")
+          .forEach((a) => a.classList.toggle("on", a.dataset.n == pg));
+        document.querySelectorAll(".car").forEach(autoCar);
+        if (pg == "contact") bindContact();
+        if (pg == "admin") bindAdmin();
+        cartUI();
+        window.scrollTo(0, 0);
+      }
+      $("#app").addEventListener("click", (e) => {
+        const c = e.target.closest(".card");
+        if (c) return openP(c.dataset.id);
+        const k = e.target.closest(".cat");
+        if (k) location.hash = "shop/" + encodeURIComponent(k.dataset.cat);
+      });
+      $("#app").addEventListener("keydown", (e) => {
+        if (e.key == "Enter") {
+          const c = e.target.closest(".card");
+          if (c) openP(c.dataset.id);
+        }
+      });
+      $("#cartBtn").onclick = openCart;
+      $("#orderNow").onclick = openCart;
+      async function poll() {
+        if (
+          !AUTH ||
+          !location.hash.startsWith("#admin") ||
+          $("#ov").classList.contains("show")
+        )
+          return;
+        try {
+          const n = await api("GET", "orders");
+          if (n.length > O.length) {
+            toast("New order received");
+            document.title = "(New order) 24 Heelz NG";
+          }
+          if (JSON.stringify(n) != JSON.stringify(O)) {
+            const y = scrollY;
+            await route();
+            scrollTo(0, y);
+          }
+        } catch (e) {}
+      }
+      (async () => {
+        try {
+          [P, S] = await Promise.all([
+            api("GET", "products"),
+            api("GET", "config"),
+          ]);
+        } catch (e) {
+          toast("Could not load products. Is the server running?");
+        }
+        window.onhashchange = route;
+        route();
+        setInterval(poll, 15000);
+      })();
+    </script>
+    <script src="/storefront.js"></script>
+    <style>
+      /* Home page: red-shoe hero and uninterrupted image marquees. */
+      .home-hero { min-height:580px; background:#21151a; color:#fff; overflow:hidden; }
+      .home-hero .wrap { min-height:580px; display:grid; grid-template-columns:1fr 1fr; gap:42px; align-items:center; }
+      .home-hero .eyebrow { color:#f1bdcb; }
+      .home-hero h1 { max-width:8ch; font-size:clamp(52px,6.2vw,86px); line-height:.92; letter-spacing:-.06em; }
+      .home-hero h1 em { color:#f6c2ce; font-weight:500; }
+      .home-hero p { max-width:42ch; margin:22px 0 28px; color:#e6d9dd; }
+      .home-hero .btn { background:#f7dde3; color:#21151a; box-shadow:none; }
+      .red-shoe-art { position:relative; height:480px; display:grid; place-items:center; isolation:isolate; }
+      .red-shoe-art::before { content:""; position:absolute; width:88%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,#a74464 0%,#702842 37%,transparent 70%); filter:blur(12px); z-index:-1; }
+      .red-shoe-art::after { content:""; position:absolute; bottom:7%; width:68%; height:12%; border-radius:50%; background:#070405b8; filter:blur(16px); z-index:-1; }
+      .red-shoe-art img { width:100%; max-height:480px; object-fit:contain; object-position:center; }
+      .home-marquees { padding:54px 0 64px; background:var(--ivory); }
+      .home-marquee + .home-marquee { margin-top:42px; }
+      .home-marquee h2 { margin:0 0 16px; font-size:38px; }
+      .home-marquee-viewport { overflow:hidden; mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent); -webkit-mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent); }
+      .home-marquee-track { display:flex; width:max-content; animation:hero-marquee 40s linear infinite; }
+      .home-marquee-set { display:flex; flex:none; }
+      .home-marquee.bags .home-marquee-track { animation-direction:reverse; }
+      .home-marquee-card { flex:0 0 240px; width:240px; margin-right:16px; overflow:hidden; border-radius:16px; background:#fff; box-shadow:0 5px 22px #21151a18; }
+      .home-marquee-card .image { width:100%; aspect-ratio:4/5; background:#eee4df; overflow:hidden; }
+      .home-marquee-card .image img { width:100%; height:100%; display:block; object-fit:cover; }
+      .home-marquee-card .details { padding:12px 13px 14px; }
+      .home-marquee-card h3 { margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:16px; }
+      .home-marquee-card .price { margin-top:3px; color:var(--berry); font-weight:700; }
+      @keyframes hero-marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+      @media (max-width:760px) {
+        .home-hero,.home-hero .wrap { min-height:auto; }
+        .home-hero .wrap { grid-template-columns:1fr; gap:8px; padding-top:56px; padding-bottom:26px; }
+        .home-hero h1 { font-size:clamp(48px,14vw,66px); }
+        .red-shoe-art { height:320px; }
+        .red-shoe-art img { max-height:320px; }
+        .home-marquees { padding:35px 0 48px; }
+        .home-marquee + .home-marquee { margin-top:30px; }
+        .home-marquee h2 { font-size:30px; }
+        .home-marquee-card { flex-basis:210px; width:210px; }
+      }
+      /* Final responsive navigation and premium hero treatment. */
+      header .nav { height:88px; }
+      header .brand { display:flex; align-items:center; gap:12px; overflow:visible; }
+      header .brand img { width:auto !important; height:64px !important; max-height:none !important; padding:0 !important; border-radius:0 !important; object-fit:contain; overflow:visible; }
+      .menu-toggle { display:none !important; }
+      .wab { position:fixed !important; right:24px !important; bottom:42px !important; width:60px !important; height:60px !important; min-width:60px !important; min-height:60px !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; border-radius:50% !important; background:#25D366 !important; color:#fff !important; box-shadow:0 10px 25px #0004 !important; }
+      .wab svg { display:block !important; width:32px !important; height:32px !important; flex:none; }
+      .home-hero { min-height:660px; }
+      .home-hero .wrap { min-height:660px; grid-template-columns:.82fr 1.18fr; gap:18px; }
+      .red-shoe-art { height:660px; display:flex; align-items:center; justify-content:flex-end; overflow:visible; isolation:isolate; background:none; }
+      .red-shoe-art::before { content:""; position:absolute; inset:5% -18% 5% 0; width:auto; height:auto; border-radius:0; background:radial-gradient(ellipse at 80% 52%,#70284288 0%,#4a1b3380 38%,transparent 72%); filter:blur(34px); box-shadow:none !important; z-index:-2; }
+      .red-shoe-art::after { content:""; position:absolute; right:7%; bottom:8%; width:68%; height:8%; border-radius:50%; background:#080406a8; filter:blur(18px); z-index:-1; }
+      .red-shoe-art > img { position:relative; z-index:1; width:100%; max-width:none; height:660px; max-height:700px; object-fit:contain; object-position:right center; transform:none; filter:none; -webkit-mask-image:none; mask-image:none; }
+      .home-marquee-track { animation-duration:150s !important; }
+      .home-marquee.shoes .home-marquee-track { animation-duration:170s !important; }
+      @media (max-width:900px) {
+        header .nav { height:68px; }
+        header .brand img { height:48px !important; width:auto !important; }
+        .menu-toggle { display:block !important; }
+        .nav nav { display:none !important; position:absolute; top:68px; left:0; right:0; z-index:50; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; padding:14px 20px 18px; max-width:none !important; overflow:visible !important; background:var(--ivory); border-bottom:1px solid var(--line); box-shadow:0 12px 24px #0002; }
+        .nav nav.open { display:grid !important; }
+        .nav nav a { padding:10px; }
+      }
+      @media (max-width:760px) {
+        .home-hero .wrap { min-height:auto; grid-template-columns:1fr; gap:0; padding-top:54px; padding-bottom:18px; }
+        .red-shoe-art { height:420px; justify-content:center; overflow:visible; }
+        .red-shoe-art::before { inset:7% -10% 3%; width:auto; height:auto; right:auto; top:auto; transform:none; }
+        .red-shoe-art::after { right:16%; bottom:7%; width:68%; }
+        .red-shoe-art > img { width:100%; height:420px; max-height:420px; object-position:center; transform:none; }
+        .wab { right:18px !important; bottom:86px !important; }
+      }
+      /* Hero image only: break the artwork out to the browser's right edge. */
+      .home-hero { position:relative; }
+      .home-hero .wrap { position:static; }
+      .home-hero .wrap > :first-child { position:relative; z-index:2; }
+      .home-hero .red-shoe-art { position:absolute; top:12px; right:0; bottom:12px; width:56vw; height:auto; margin:0; padding:0; overflow:visible; }
+      .home-hero .red-shoe-art::before { inset:6% 0 5% 14%; background:radial-gradient(ellipse at 80% 50%,#70284270 0%,#4a1b3360 42%,transparent 72%); }
+      .home-hero .red-shoe-art > img { width:100%; height:100%; max-height:none; object-fit:contain; object-position:right bottom; }
+      @media (max-width:760px) {
+        .home-hero .red-shoe-art { position:relative; top:auto; right:0; bottom:auto; width:100%; height:420px; margin-top:8px; }
+        .home-hero .red-shoe-art > img { width:100%; height:420px; max-height:420px; object-position:right bottom; }
+        .wab { bottom:104px !important; }
+      }
+      /* Full editorial portrait treatment for the couture hero image. */
+      .home-hero { min-height:680px; background:#120b0e; }
+      .home-hero::before { content:""; position:absolute; z-index:1; inset:0; pointer-events:none; background:linear-gradient(90deg,#120b0ef5 0%,#120b0edb 28%,#120b0e75 47%,transparent 68%); }
+      .home-hero .wrap { min-height:680px; position:relative; z-index:2; }
+      .home-hero .wrap > :first-child { max-width:430px; }
+      .home-hero .red-shoe-art { position:absolute; inset:0; width:100vw; height:680px; overflow:hidden; z-index:0; }
+      .home-hero .red-shoe-art::before,.home-hero .red-shoe-art::after { display:none; }
+      .home-hero .red-shoe-art > img { width:100%; height:100%; max-height:none; object-fit:contain; object-position:right bottom; filter:contrast(.97) saturate(.94); }
+      @media (max-width:760px) {
+        .home-hero { min-height:auto; }
+        .home-hero::before { background:linear-gradient(180deg,#120b0e 0%,#120b0e 37%,#120b0e82 54%,transparent 75%); }
+        .home-hero .wrap { min-height:auto; padding-bottom:0; }
+        .home-hero .wrap > :first-child { max-width:none; }
+        .home-hero .red-shoe-art { position:relative; inset:auto; width:100vw; height:420px; margin:18px 0 0; right:50%; transform:translateX(50%); overflow:hidden; }
+        .home-hero .red-shoe-art > img { width:100%; height:420px; max-height:420px; object-fit:contain; object-position:center bottom; }
+      }
+    </style>
+    <script>
+      (() => {
+        const heroImage = "/assets/Glamorous%20Red%20Couture%20with%20Handbag.png";
+        const bagPattern = /bag|handbag|tote|clutch|purse/i;
+        const isHero = (p) => (p.imgs || []).some((u) => u.includes("Glamorous%20Red%20Couture%20with%20Handbag.png"));
+        const card = (p) => `<article class="home-marquee-card" data-id="${p.id}" tabindex="0" role="button"><div class="image">${img(p)}</div><div class="details"><h3>${esc(p.name)}</h3><div class="price">${N(p.price)}</div></div></article>`;
+        const row = (title, products, bags) => {
+          return `<section class="home-marquee ${bags ? "bags" : "shoes"}"><div class="wrap"><h2>${title}</h2></div><div class="home-marquee-viewport"><div class="home-marquee-track"><div class="home-marquee-set">${products.map(card).join("")}</div><div class="home-marquee-set" aria-hidden="true">${products.map(card).join("")}</div></div></div></section>`;
+        };
+        home = function () {
+          const products = P.filter((p) => p.imgs && p.imgs[0] && !isHero(p));
+          const bags = products.filter((p) => bagPattern.test(p.name));
+          const shoes = products.filter((p) => !bagPattern.test(p.name));
+          return `<section class="home-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated shoes and beautiful handbags selected for every unforgettable entrance.</p><a class="btn" href="#shop">Shop the collection</a></div><div class="red-shoe-art"><img src="${heroImage}" alt="Glamorous red couture with handbag" fetchpriority="high"></div></div></section><div class="home-marquees">${row("Shoes", shoes, false)}${row("Bags", bags, true)}</div>`;
+        };
+        const setWhatsAppLink = () => {
+          const number = String(S.wa || "2347079524939").replace(/\D/g, "");
+          $("#wab").href = `https://wa.me/${number}?text=Hello%2024%20Heelz%20NG`;
+        };
+        const priorSetMeta = setMeta;
+        setMeta = function (page) { priorSetMeta(page); setWhatsAppLink(); };
+        setWhatsAppLink();
+      })();
+    </script>
+  </body>
+</html>
