@@ -826,12 +826,11 @@
         <nav id="navMenu">
           <a href="#home" data-n="home">Home</a
           ><a href="#shop" data-n="shop">Shop</a
-          ><a href="#new" data-n="new">New in</a
+          ><details class="nav-drop"><summary>Fresh arrivals <span aria-hidden="true">⌄</span></summary><div class="nav-sub"><a href="#new">New in</a><a href="#new/restocked">Restocked</a></div></details
           ><a href="#lookbook" data-n="lookbook">Lookbook</a
           ><a href="#about" data-n="about">About</a
           ><a href="#delivery" data-n="delivery">Delivery</a
-          ><a href="#contact" data-n="contact">Contact</a
-          ><a href="#admin" data-n="admin">Admin</a>
+          ><a href="#contact" data-n="contact" class="contact-nav" aria-label="Contact" title="Contact"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="7.5" r="4.5"/><path d="M3.5 21c0-4.5 3.8-7.5 8.5-7.5s8.5 3 8.5 7.5"/></svg></a
         </nav>
         <button class="cartbtn" id="cartBtn" aria-label="Open cart">
           <span aria-hidden="true">🛍</span><span class="cart-label"> Cart</span> <span id="cc">0</span>
@@ -897,12 +896,13 @@
         "Strappy",
         "Kitten heels",
         "Platforms",
+        "Slippers",
         "Tote bags",
         "Mini bags",
         "Clutches",
         "Crossbody bags",
       ];
-      const HEEL_CATS = ["Stilettos", "Block heels", "Strappy", "Kitten heels", "Platforms"];
+      const HEEL_CATS = ["Stilettos", "Block heels", "Strappy", "Kitten heels", "Platforms", "Slippers"];
       const BAG_CATS = ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"];
       const COL = [
         "#111",
@@ -1106,6 +1106,9 @@
       const steps = () =>
         `<div class="steps"><div><b>1. Pick your pairs</b>Open any pair to see its price, sizes and how many are left.</div><div><b>2. Press ORDER NOW</b>Enter your name, WhatsApp number, email and delivery address.</div><div><b>3. We confirm on WhatsApp</b>We confirm availability, delivery fee and payment with you.</div></div>`;
       function newIn() {
+        const restocked = location.hash.startsWith("#new/restocked"), list = restocked ? P.filter((p) => p.restocked) : P.slice(0, 30);
+        if (restocked)
+          return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Back by popular demand</div><h1 style="font-size:52px">Restocked</h1><p style="color:var(--mute);max-width:58ch">Freshly replenished pieces, added and managed directly by 24 Heelz NG.</p></div>` + carH("Restocked styles", list, "#shop") + (list.length ? "" : `<div class="wrap" style="padding-bottom:52px"><p>No restocked pieces are live right now. Check back soon.</p></div>`);
         return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Freshly curated</div><h1 style="font-size:52px">New in</h1><p style="color:var(--mute);max-width:58ch">The latest heel and handbag arrivals, chosen to make an occasion of every outfit.</p></div>` + carH("Just landed", P.slice(0, 30), "#shop") + `<section class="blk"><div class="wrap"><div class="cgrid"><div><b>Need a second opinion?</b><p>Send us a photo of your outfit on WhatsApp and we will help you choose the right finish.</p></div><div><b>Always current</b><p>Availability is managed live in our boutique. Once a piece is gone, it is marked unavailable.</p></div></div></div></section>`;
       }
       function lookbook() {
@@ -1444,6 +1447,7 @@
               price: 0,
               stock: 1,
               avail: false,
+              restocked: false,
               color: "#111111",
               style: "stiletto",
               sizes: "36,37,38,39,40,41",
@@ -1473,6 +1477,7 @@
               price: 0,
               stock: 1,
               avail: true,
+              restocked: false,
               color: "#111111",
               style: "stiletto",
               sizes: "36,37,38,39,40,41",
@@ -1486,6 +1491,9 @@
         let imgs = [...(p.imgs || [])];
         $("#modal").innerHTML =
           `<button class="x" aria-label="Close">×</button><h2>${id ? "Edit" : "Add"} product</h2><form id="pf"><div class="grid2"><div><label>Name</label><input name="name" value="${esc(p.name)}" required></div><div><label>Category</label><select name="cat">${CATS.map((c) => `<option ${c == p.cat ? "selected" : ""}>${c}</option>`).join("")}</select></div><div><label>Price (₦)</label><input name="price" type="number" min="0" value="${p.price}" required></div><div><label>Number in stock</label><input name="stock" type="number" min="0" value="${p.stock}" required></div><div><label>Availability</label><select name="avail"><option value="1" ${p.avail ? "selected" : ""}>Available</option><option value="0" ${p.avail ? "" : "selected"}>Not available</option></select></div><div><label>Sizes (comma separated)</label><input name="sizes" value="${esc(p.sizes)}"></div><div><label>Heel height</label><input name="heel" value="${esc(p.heel)}" placeholder="e.g. 8 cm"></div><div><label>Material</label><input name="material" value="${esc(p.material)}" placeholder="e.g. Leather"></div><div><label>Colours</label><input name="colors" value="${esc(p.colors)}"></div><div><label>Drawing style (only if no photo)</label><select name="style">${["stiletto", "block", "kitten", "strappy", "platform"].map((c) => `<option ${c == p.style ? "selected" : ""}>${c}</option>`).join("")}</select></div></div><input name="color" type="hidden" value="${p.color}"><label>Description</label><textarea name="desc" rows="3">${esc(p.desc)}</textarea><label>Photos (first photo is the main one; click a photo to make it main)</label><div id="ph"></div><input type="file" id="fi" accept="image/*" multiple><button class="btn" style="margin-top:16px">Save product</button> ${id ? '<button type="button" class="btn alt" id="dp">Delete</button>' : ""}</form>`;
+        const restockControl = document.createElement("div");
+        restockControl.innerHTML = `<label>Fresh arrivals</label><label style="display:flex;align-items:center;gap:8px;margin-top:7px"><input name="restocked" type="checkbox" ${p.restocked ? "checked" : ""}> Show this product on the Restocked page</label>`;
+        $("#pf .grid2").append(restockControl);
         const ph = () => {
           $("#ph").innerHTML =
             imgs
@@ -1531,6 +1539,7 @@
             price: +f.price,
             stock: +f.stock,
             avail: f.avail == "1",
+            restocked: f.restocked === "on",
             sizes: f.sizes,
             style: f.style,
             color: f.color,
@@ -1797,6 +1806,12 @@
       header .brand { display:flex; align-items:center; gap:12px; overflow:visible; }
       header .brand img { width:auto !important; height:64px !important; max-height:none !important; padding:0 !important; border-radius:0 !important; object-fit:contain; overflow:visible; }
       .menu-toggle { display:none !important; }
+      .nav-drop { position:relative; display:flex; align-items:center; }
+      .nav-drop-toggle { appearance:none; border:0; background:transparent; color:inherit; padding:9px 10px; font:inherit; font-size:13px; font-weight:700; white-space:nowrap; }
+      .nav-drop-toggle span { margin-left:3px; font-size:15px; }
+      .nav-sub { display:none; position:absolute; top:100%; left:0; min-width:150px; padding:7px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 24px #0002; }
+      .nav-sub a { display:block; white-space:nowrap; }
+      .nav-drop:hover .nav-sub, .nav-drop:focus-within .nav-sub, .nav-drop.open .nav-sub { display:block; }
       .wab { position:fixed !important; right:24px !important; bottom:42px !important; width:60px !important; height:60px !important; min-width:60px !important; min-height:60px !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; border-radius:50% !important; background:#25D366 !important; color:#fff !important; box-shadow:0 10px 25px #0004 !important; }
       .wab svg { display:block !important; width:32px !important; height:32px !important; flex:none; }
       .home-hero { min-height:660px; }
@@ -1814,6 +1829,10 @@
         .nav nav { display:none !important; position:absolute; top:68px; left:0; right:0; z-index:50; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; padding:14px 20px 18px; max-width:none !important; overflow:visible !important; background:var(--ivory); border-bottom:1px solid var(--line); box-shadow:0 12px 24px #0002; }
         .nav nav.open { display:grid !important; }
         .nav nav a { padding:10px; }
+        .nav-drop { display:block; }
+        .nav-drop-toggle { width:100%; text-align:left; padding:10px; }
+        .nav-sub { position:static; box-shadow:none; border:0; padding:0 0 0 10px; background:transparent; }
+        .nav-drop.open .nav-sub { display:block; }
       }
       @media (max-width:760px) {
         .home-hero .wrap { min-height:auto; grid-template-columns:1fr; gap:0; padding-top:54px; padding-bottom:18px; }
@@ -1854,9 +1873,9 @@
     </style>
     <script>
       (() => {
-        const heroImage = "/assets/Glamorous%20Red%20Couture%20with%20Handbag.png";
+        const heroImage = "/assets/Glamorous%20Reclining%20Figure%20with%20Jeweled%20Heels.png";
         const bagPattern = /bag|handbag|tote|clutch|purse/i;
-        const isHero = (p) => (p.imgs || []).some((u) => u.includes("Glamorous%20Red%20Couture%20with%20Handbag.png"));
+        const isHero = (p) => (p.imgs || []).some((u) => u.includes("Glamorous%20Reclining%20Figure%20with%20Jeweled%20Heels.png"));
         const card = (p) => `<article class="home-marquee-card" data-id="${p.id}" tabindex="0" role="button"><div class="image">${img(p)}</div><div class="details"><h3>${esc(p.name)}</h3><div class="price">${N(p.price)}</div></div></article>`;
         const row = (title, products, bags) => {
           return `<section class="home-marquee ${bags ? "bags" : "shoes"}"><div class="wrap"><h2>${title}</h2></div><div class="home-marquee-viewport"><div class="home-marquee-track"><div class="home-marquee-set">${products.map(card).join("")}</div><div class="home-marquee-set" aria-hidden="true">${products.map(card).join("")}</div></div></div></section>`;
@@ -1874,6 +1893,86 @@
         const priorSetMeta = setMeta;
         setMeta = function (page) { priorSetMeta(page); setWhatsAppLink(); };
         setWhatsAppLink();
+      })();
+    </script>
+    <style>
+      /* Final heel-first home: a contained artwork and clear product hierarchy. */
+      .nav-drop { position:relative; }
+      .nav nav { align-items:center; }
+      .nav-drop { display:flex; align-items:center; margin:0; }
+      .nav-drop summary { list-style:none; cursor:pointer; padding:9px 10px; font-size:13px; font-weight:700; white-space:nowrap; }
+      .nav-drop summary::-webkit-details-marker { display:none; }
+      .nav-drop summary span { margin-left:3px; font-size:15px; }
+      .nav-drop:not([open]) .nav-sub { display:none !important; }
+      .nav-drop[open] summary span { display:inline-block; transform:rotate(180deg); }
+      .nav-drop[open] .nav-sub { display:grid; }
+      .nav-drop-toggle { display:none !important; }
+      .heel-home { background:#120b0e; color:#fff; padding:42px 0 60px; }
+      .heel-home .wrap { min-height:540px; display:grid; grid-template-columns:.82fr 1.18fr; align-items:center; gap:28px; }
+      .heel-home-copy { position:relative; z-index:2; max-width:460px; }
+      .heel-home .eyebrow { color:#f5bdcf; }
+      .heel-home h1 { max-width:8ch; font-size:clamp(54px,6vw,88px); line-height:.92; letter-spacing:-.065em; }
+      .heel-home h1 em { color:#f7c1cf; font-weight:500; }
+      .heel-home p { margin:22px 0 28px; max-width:40ch; color:#eadce0; }
+      .heel-home .btn { background:#f8dde5; color:#1b1014; box-shadow:none; }
+      .heel-home-art { height:500px; max-width:560px; width:100%; justify-self:center; display:grid; place-items:center; position:relative; }
+      .heel-home-art::before { content:""; position:absolute; width:78%; height:78%; border-radius:50%; background:radial-gradient(ellipse,#78304b 0%,#421b2e 48%,transparent 72%); filter:blur(12px); }
+      .heel-home-art img { position:relative; z-index:1; display:block; width:76%; height:88%; object-fit:contain; object-position:center; }
+      .heel-spotlight { padding:80px 0; background:#120b0e; color:#fff; }
+      .heel-spotlight-head { display:flex; align-items:end; justify-content:space-between; gap:22px; margin-bottom:26px; }
+      .heel-spotlight-head h2 { font-size:clamp(36px,4vw,58px); line-height:.98; max-width:10ch; }
+      .heel-spotlight-head p { max-width:34ch; color:#e8d8dd; }
+      .heel-gallery { display:grid; grid-template-columns:1.15fr .85fr .85fr; grid-template-rows:260px 260px; gap:16px; }
+      .heel-gallery-card { position:relative; min-height:0; overflow:hidden; border-radius:18px; background:#ece3e0; border:0; text-align:left; color:#fff; cursor:pointer; }
+      .heel-gallery-card:first-child { grid-row:span 2; }
+      .heel-gallery-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease; }
+      .heel-gallery-card:hover img { transform:scale(1.05); }
+      .heel-gallery-card span { position:absolute; inset:auto 12px 12px; padding:7px 11px; background:#160d10dc; border-radius:999px; font-size:13px; font-weight:700; }
+      .slipper-edit { padding:70px 0; background:#fff; }
+      .slipper-edit .sh h2 { font-size:38px; }
+      @media(max-width:900px) { .nav-drop summary { padding:10px; } .nav-drop .nav-sub { position:static; padding:0 0 0 10px; border:0; box-shadow:none; background:transparent; } .heel-home .wrap { min-height:auto; grid-template-columns:1fr; padding-top:30px; gap:0; } .heel-home-copy { max-width:none; } .heel-home-art { height:465px; } .heel-gallery { grid-template-columns:1fr 1fr; grid-template-rows:250px 190px; } .heel-gallery-card:first-child { grid-row:span 2; } }
+      @media(max-width:600px) { .heel-home { padding:28px 0 42px; } .heel-home h1 { font-size:clamp(48px,14vw,68px); } .heel-home-art { height:390px; max-width:390px; } .heel-spotlight { padding:55px 0; } .heel-spotlight-head { display:block; } .heel-spotlight-head p { margin-top:14px; } .heel-gallery { grid-template-columns:1fr 1fr; grid-template-rows:220px 160px; gap:9px; } .slipper-edit { padding:50px 0; } }
+      /* Luxe Showroom hero: one continuous image from the navigation through the hero. */
+      header { position:fixed; inset:0 0 auto; background:transparent; border-bottom:0; box-shadow:none; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; transition:background .2s ease; }
+      header.scrolled { background:#120b0e; }
+      body:not(:has(main .heel-home)) main { padding-top:88px; }
+      body:has(main .heel-home) header { position:fixed; inset:0 0 auto; background:transparent; border-bottom:0; color:#fff; box-shadow:none; }
+      body:has(main .heel-home) header.scrolled { background:#120b0e; }
+      body:has(main .heel-home) .nav nav a, body:has(main .heel-home) .nav-drop summary { color:#fff; }
+      body:has(main .heel-home) .nav nav a.on { background:#fff; color:#341426; }
+      body:has(main .heel-home) .nav-drop .nav-sub { background:#171014f2; border-color:#ffffff24; }
+      body:has(main .heel-home) .nav-drop .nav-sub a { color:#fff; }
+      .heel-home { min-height:690px; padding:0; background:linear-gradient(90deg,#0b090af2 0%,#0b090adf 31%,#0b090a8c 53%,#0b090a1c 75%,#0b090a10 100%),url("/assets/Luxe%20Showroom%20Shoe%20Showcase.png") center top/cover no-repeat; }
+      .heel-home .wrap { min-height:690px; grid-template-columns:1fr; align-items:center; padding-top:56px; }
+      .heel-home-copy { max-width:500px; }
+      .heel-home-art { display:none; }
+      .contact-nav { display:grid; place-items:center; width:38px; height:38px; padding:0 !important; line-height:1; }
+      .contact-nav svg { width:22px; height:22px; fill:currentColor; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; }
+      @media(max-width:900px) { body:has(main .heel-home) header { position:fixed; background:transparent; } .heel-home { min-height:610px; background-position:60% center; } .heel-home .wrap { min-height:610px; padding-top:22px; } }
+      @media(max-width:600px) { .heel-home { min-height:580px; background-position:64% center; background-image:linear-gradient(90deg,#0b090af5 0%,#0b090ad9 55%,#0b090a48 100%),url("/assets/Luxe%20Showroom%20Shoe%20Showcase.png"); } .heel-home .wrap { min-height:580px; } }
+    </style>
+    <script>
+      (() => {
+        const heelsOnly = () => P.filter((p) => !BAG_CATS.includes(p.cat) && p.cat !== "Slippers" && p.imgs?.[0]);
+        const tile = (p) => `<button class="heel-gallery-card" data-cat="${esc(p.cat)}">${img(p)}<span>${esc(p.cat)}</span></button>`;
+        home = function () {
+          const heels = heelsOnly();
+          const slippers = P.filter((p) => p.cat === "Slippers" && p.imgs?.[0]);
+          const categories = HEEL_CATS.filter((c) => c !== "Slippers").map((c) => heels.find((p) => p.cat === c)).filter(Boolean).slice(0, 5);
+          return `<section class="heel-home"><div class="wrap"><div class="heel-home-copy"><div class="eyebrow">24 HEELZ NG · THE HEEL HOUSE</div><h1>Heels made to <em>hold</em> the room.</h1><p>From crystal-lit stilettos to polished platforms, discover the pair that turns every entrance into a moment.</p><a class="btn" href="#shop">Shop all heels</a></div><div class="heel-home-art"><img src="/assets/Glamorous%20Reclining%20Figure%20with%20Jeweled%20Heels.png" alt="Reclining figure wearing jeweled gold heels" fetchpriority="high"></div></div></section><section class="heel-spotlight" id="heel-gallery"><div class="wrap"><div class="heel-spotlight-head"><div><div class="eyebrow">THE MAIN EVENT</div><h2>The heel gallery.</h2></div><p>Choose your silhouette. Every collection is built around the heel—its line, height, texture and impact.</p></div><div class="heel-gallery">${categories.map(tile).join("")}</div></div></section>${slippers.length ? `<section class="slipper-edit">${homeCar("The slipper edit", slippers, "#shop/Slippers")}</section>` : ""}<section class="showcase">${homeCar("Most wanted heels", heels.slice(0,15), "#shop")}</section>`;
+        };
+        shop = function (filter) {
+          const isBag = (p) => BAG_CATS.includes(p.cat);
+          const slippers = P.filter((p) => p.cat === "Slippers");
+          const heels = P.filter((p) => !isBag(p) && p.cat !== "Slippers");
+          const list = filter ? P.filter((p) => p.cat === filter) : P;
+          const title = filter ? esc(filter) : "The shoe room";
+          const tabs = `<div class="collection-tabs"><a href="#shop">All pieces</a><a href="#shop/Stilettos">Heels</a><a href="#shop/Slippers">Slippers</a><a href="#shop/Tote%20bags">Handbags</a></div>`;
+          const intro = `<div class="wrap" style="padding-top:48px"><div class="eyebrow">24 HEELZ NG · SHOP</div><h1 style="font-size:52px">${title}</h1><p style="color:var(--mute)">Explore our heel-led edit, plus a dedicated slippers collection for softer moments.</p>${tabs}</div>`;
+          if (filter) return intro + carH(filter, list, "#shop");
+          return intro + carH("Statement heels", heels, "#shop/Stilettos") + (slippers.length ? `<section class="slipper-edit">${homeCar("The slipper edit", slippers, "#shop/Slippers")}</section>` : "") + carH("Handbags", P.filter(isBag), "#shop/Tote%20bags");
+        };
+        if (!location.hash || location.hash === "#home") window.dispatchEvent(new Event("hashchange"));
       })();
     </script>
   </body>

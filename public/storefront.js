@@ -44,10 +44,22 @@
     const isOpen = menu.classList.toggle("open");
     document.querySelector("#menuToggle").setAttribute("aria-expanded", String(isOpen));
   };
-  document.querySelector("#navMenu").addEventListener("click", () => {
+  document.querySelector("#navMenu").addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
     document.querySelector("#navMenu").classList.remove("open");
     document.querySelector("#menuToggle").setAttribute("aria-expanded", "false");
+    document.querySelector(".nav-drop")?.removeAttribute("open");
   });
+  document.querySelector(".nav-drop-toggle")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const drop = event.currentTarget.closest(".nav-drop");
+    const open = drop.classList.toggle("open");
+    event.currentTarget.setAttribute("aria-expanded", String(open));
+  });
+  const syncHeaderBackground = () => document.querySelector("header")?.classList.toggle("scrolled", window.scrollY > 24);
+  window.addEventListener("scroll", syncHeaderBackground, { passive: true });
+  syncHeaderBackground();
   const updateWhatsApp = () => {
     const link = document.querySelector("#wab");
     if (link && S.wa) link.href = `https://wa.me/${String(S.wa).replace(/\D/g, "")}?text=${encodeURIComponent("Hello 24 Heelz NG, I would like to make an enquiry.")}`;
