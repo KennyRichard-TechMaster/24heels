@@ -22,14 +22,16 @@ fs.mkdirSync(DIR,{recursive:true});
 const UP=path.join(DIR,'uploads');fs.mkdirSync(UP,{recursive:true});
 function saveImg(d){const m=String(d||'').match(/^data:image\/(jpeg|png|webp);base64,(.+)$/s);if(!m)throw new Error('Bad image');const b=Buffer.from(m[2],'base64');if(b.length>4e6)throw new Error('Image too large');
  const n=crypto.randomBytes(8).toString('hex')+'.'+(m[1]=='jpeg'?'jpg':m[1]);fs.writeFileSync(path.join(UP,n),b);return '/uploads/'+n}
-const DEF={wa:process.env.ADMIN_WHATSAPP_NUMBER||'2347079524939',email:process.env.SHOP_EMAIL||'olugbusikehinde01@gmail.com',phone:'',address:'',hours:'',insta:'',
+const DEF={wa:process.env.ADMIN_WHATSAPP_NUMBER||'2349030451124',email:process.env.SHOP_EMAIL||'Hello24heelz@gmail.com',phone:'',address:'',hours:'',insta:'https://www.instagram.com/24heelzng?vrfl=MWhuZzdzNHA5c2o0Mw%3D%3D&utm_source=qr',tiktok:'https://www.tiktok.com/@24heelzng?_r=1&_t=ZS-9BKMJad2brg',
  about:"24 Heelz NG is a Nigerian online store for ladies' heels. Our promise is simple: quality for less.\nWe confirm every order personally on WhatsApp, so you know your size, price and delivery details before you pay.",
  delivery:'We deliver across Nigeria. The delivery fee and time depend on your city, and we confirm both with you on WhatsApp before you pay.',
  returns:'If your pair arrives damaged or in the wrong size, message us on WhatsApp as soon as you receive it, with a photo, and we will arrange an exchange where possible.',
  payment:'Payment details are shared with you on WhatsApp when we confirm your order.'};
-const PUBK=['wa','email','phone','address','hours','insta','about','delivery','returns','payment'];
+const PUBK=['wa','email','phone','address','hours','insta','tiktok','about','delivery','returns','payment'];
 let db;try{db=JSON.parse(fs.readFileSync(DBF,'utf8'))}catch(e){db={products:seed,orders:[],seq:0,settings:{user:'Kenny',pass:hash('1234richard')}}}
 db.settings={...DEF,...db.settings};
+if(db.settings.wa==='2347079524939'){db.settings.wa=DEF.wa;db.settings.insta=DEF.insta;db.settings.tiktok=DEF.tiktok}
+if(!db.settings.email||db.settings.email==='olugbusikehinde01@gmail.com')db.settings.email=DEF.email;
 if(process.env.ADMIN_USERNAME)db.settings.user=process.env.ADMIN_USERNAME;
 if(process.env.ADMIN_PASSWORD&&!db.envPasswordSet){db.settings.pass=hash(process.env.ADMIN_PASSWORD);db.envPasswordSet=true}
 db.products.forEach((p,i)=>{p.imgs=Array.isArray(p.imgs)?p.imgs:[];if(typeof p.img=='string'&&p.img.startsWith('data:image/')){try{p.imgs.unshift(saveImg(p.img))}catch(e){}}delete p.img;p.heel=p.heel||'';p.material=p.material||'';p.colors=p.colors||'';p.restocked=!!p.restocked;if(p.imgs.some(u=>/^https:\/\/images\.unsplash\.com\//.test(u)))p.imgs=[p.id.startsWith('b')?BAG_PHOTOS[i%BAG_PHOTOS.length]:HEEL_PHOTOS[i%HEEL_PHOTOS.length]]});
@@ -43,6 +45,17 @@ function seedOwnAssets(){if(db.assetSeedVersion>=2)return;const root=path.join(P
 seedOwnAssets();
 function seedSlippers(){if(db.slippersSeedVersion>=2)return;const root=path.join(PUB,'assets');const files=ownAssetFiles(root).filter(f=>/slipper|slip into|bedroom/i.test(f));let i=0;for(const file of files){const url='/assets/'+file.split(path.sep).map(encodeURIComponent).join('/'),existing=db.products.find(p=>(p.imgs||[]).includes(url));if(existing){existing.cat='Slippers';existing.style='slipper';existing.heel='';continue}i++;db.products.unshift({id:'slipper-'+Date.now()+'-'+i,name:productTitle(file),cat:'Slippers',price:12000,stock:10,avail:true,restocked:false,color:'#7a4a2b',style:'slipper',sizes:'36,37,38,39,40,41',desc:'Comfort-led slippers selected for an effortless, polished finish.',imgs:[url],heel:'',material:'Soft comfort finish',colors:'As shown'})}db.slippersSeeded=true;db.slippersSeedVersion=2;save()}
 seedSlippers();
+function fixProductCategories(){
+ const fixes={
+  'asset-43':{name:'Burgundy Crystal Stilettos',cat:'Stilettos',style:'stiletto',sizes:'36,37,38,39,40,41',heel:'10 cm'},
+  'asset-45':{name:'Black Chain Shoulder Bag',cat:'Tote bags',style:'bag',sizes:'One size',heel:''},
+  'asset-62':{name:'Burgundy Top-Handle Bag',cat:'Tote bags',style:'bag',sizes:'One size',heel:''}
+ };
+ let changed=false;
+ for(const p of db.products){const f=fixes[p.id];if(!f)continue;for(const [k,v] of Object.entries(f))if(p[k]!==v){p[k]=v;changed=true}}
+ if(changed)save();
+}
+fixProductCategories();
 const sess=new Map(),hits={},fails={};
 const send=(res,code,obj)=>{res.writeHead(code,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(obj))};
 const body=req=>new Promise((ok,no)=>{let n=0,c=[];req.on('data',d=>{n+=d.length;if(n>12e6){no(new Error('Too large'));req.destroy()}else c.push(d)});req.on('end',()=>{try{const s=Buffer.concat(c).toString();ok(s?JSON.parse(s):{})}catch(e){no(new Error('Bad JSON'))}})});

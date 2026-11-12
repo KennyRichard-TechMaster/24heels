@@ -19,11 +19,7 @@
   cartUI = function () {
     oldCartUI();
     const count = CART.reduce((total, item) => total + item.qty, 0);
-    const navOrder = document.querySelector("#navOrder");
-    const navCount = document.querySelector("#navOrderCount");
     const orderCount = document.querySelector("#orderCount");
-    if (navOrder) navOrder.hidden = count === 0;
-    if (navCount) navCount.textContent = count;
     if (orderCount) orderCount.textContent = count;
     const barTxt = document.querySelector("#barTxt");
     if (barTxt && count) barTxt.textContent = `${count} item${count === 1 ? "" : "s"} in your cart`;
@@ -38,7 +34,6 @@
     const size = (product.sizes || "One size").split(",")[0].trim() || "One size";
     addCart(product.id, size);
   }, true);
-  document.querySelector("#navOrder").onclick = openCart;
   document.querySelector("#menuToggle").onclick = () => {
     const menu = document.querySelector("#navMenu");
     const isOpen = menu.classList.toggle("open");
@@ -62,7 +57,7 @@
   syncHeaderBackground();
   const updateWhatsApp = () => {
     const link = document.querySelector("#wab");
-    if (link && S.wa) link.href = `https://wa.me/${String(S.wa).replace(/\D/g, "")}?text=${encodeURIComponent("Hello 24 Heelz NG, I would like to make an enquiry.")}`;
+    if (link) link.href = `https://wa.me/2349030451124?text=${encodeURIComponent("Hello 24 Heelz NG, I would like to make an enquiry.")}`;
   };
   const oldSetMeta = setMeta;
   setMeta = function (page) { oldSetMeta(page); updateWhatsApp(); };
