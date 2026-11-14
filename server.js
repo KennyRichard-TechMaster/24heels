@@ -47,6 +47,10 @@ if(/shared with you on contact us/i.test(db.settings.payment))db.settings.paymen
 db.seq=Math.max(1000,Number(db.seq)||0);
 if(process.env.ADMIN_USERNAME)db.settings.user=process.env.ADMIN_USERNAME;
 if(process.env.ADMIN_PASSWORD&&!db.envPasswordSet){db.settings.pass=hash(process.env.ADMIN_PASSWORD);db.envPasswordSet=true}
+if(!db.settings.ceoUser)db.settings.ceoUser='CEO';
+if(!db.settings.ceoPass)db.settings.ceoPass=hash('cmd00000');
+if(process.env.CEO_ADMIN_USERNAME)db.settings.ceoUser=process.env.CEO_ADMIN_USERNAME;
+if(process.env.CEO_ADMIN_PASSWORD&&!db.ceoEnvPasswordSet){db.settings.ceoPass=hash(process.env.CEO_ADMIN_PASSWORD);db.ceoEnvPasswordSet=true}
 db.products.forEach((p,i)=>{p.imgs=Array.isArray(p.imgs)?p.imgs:[];if(typeof p.img=='string'&&p.img.startsWith('data:image/')){try{p.imgs.unshift(saveImg(p.img))}catch(e){}}delete p.img;p.heel=p.heel||'';p.material=p.material||'';p.colors=p.colors||'';p.restocked=!!p.restocked;if(p.imgs.some(u=>/^https:\/\/images\.unsplash\.com\//.test(u)))p.imgs=[p.id.startsWith('b')?BAG_PHOTOS[i%BAG_PHOTOS.length]:HEEL_PHOTOS[i%HEEL_PHOTOS.length]]});
 save();
 function save(){const t=DBF+'.tmp';fs.writeFileSync(t,JSON.stringify(db));fs.renameSync(t,DBF)}
@@ -95,7 +99,8 @@ async function api(req,res,r){
  if(m=='POST'&&r=='login'){
   const f=(fails[ip]||[]).filter(t=>now-t<6e5);if(f.length>=5)return send(res,429,{error:'Too many attempts. Wait 10 minutes.'});
   const b=await body(req);
-  if(S(b.u,80)==db.settings.user&&check(String(b.p||''),db.settings.pass)){const t=crypto.randomBytes(24).toString('hex');sess.set(t,now+432e5);return send(res,200,{token:t})}
+  const u=S(b.u,80),p=String(b.p||'');
+  if((u==db.settings.user&&check(p,db.settings.pass))||(u==db.settings.ceoUser&&check(p,db.settings.ceoPass))){const t=crypto.randomBytes(24).toString('hex');sess.set(t,now+432e5);return send(res,200,{token:t})}
   f.push(now);fails[ip]=f;return send(res,401,{error:'Wrong username or password'})}
  let pm=r.match(/^orders\/(24H-\d+)\/paid$/);if(pm&&m=='POST'){const o=db.orders.find(x=>x.id==pm[1]);if(!o)return send(res,404,{error:'Order not found'});if(o.status==='Awaiting Payment'){o.status='Payment Confirming';save()}return send(res,200,o)}
  let sm=r.match(/^orders\/(24H-\d+)\/status$/);if(sm&&m=='GET'){const o=db.orders.find(x=>x.id==sm[1]);return o?send(res,200,{id:o.id,status:o.status,total:o.total,items:o.items}):send(res,404,{error:'Order not found'})}
