@@ -13,7 +13,7 @@
   home = function () {
     const shoes = P.filter((p) => !isBag(p));
     const bags = P.filter(isBag);
-    return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated shoes and beautiful handbags selected for every unforgettable entrance.</p><a class="btn" href="#shop">Shop the collection</a></div><div class="hero-visual"><div class="visual-main"><img src="${heroAsset}" alt="Glamorous red platform heels" fetchpriority="high"></div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Confirmed on WhatsApp</div></div></section>${marquee("Shoes", shoes)}${marquee("Bags", bags, true)}<section class="fashion-section"><div class="wrap"><div class="section-kicker">Shop with confidence</div><h2 class="section-title">The 24 Heelz experience.</h2><div class="service-grid"><article class="service-card"><span>01</span><b>Add everything to your cart</b><p>Select your size and build your order at your own pace.</p></article><article class="service-card"><span>02</span><b>Order on WhatsApp</b><p>We confirm availability, delivery and payment directly with you.</p></article><article class="service-card"><span>03</span><b>Delivered with care</b><p>Every order is personally confirmed before it is finalised.</p></article></div></div></section>`;
+    return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated shoes and beautiful handbags selected for every unforgettable entrance.</p><a class="btn" href="#shop">Shop the collection</a></div><div class="hero-visual"><div class="visual-main"><img src="${heroAsset}" alt="Glamorous red platform heels" fetchpriority="high"></div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Bank transfer only</div></div></section>${marquee("Shoes", shoes)}${marquee("Bags", bags, true)}<section class="fashion-section"><div class="wrap"><div class="section-kicker">Shop with confidence</div><h2 class="section-title">The 24 Heelz experience.</h2><div class="service-grid"><article class="service-card"><span>01</span><b>Add everything to your cart</b><p>Select your size and build your order at your own pace.</p></article><article class="service-card"><span>02</span><b>Pay by bank transfer</b><p>We confirm availability, delivery and payment directly with you.</p></article><article class="service-card"><span>03</span><b>Delivered with care</b><p>Every order is personally confirmed before it is finalised.</p></article></div></div></section>`;
   };
   const oldCartUI = cartUI;
   cartUI = function () {
@@ -55,11 +55,4 @@
   const syncHeaderBackground = () => document.querySelector("header")?.classList.toggle("scrolled", window.scrollY > 24);
   window.addEventListener("scroll", syncHeaderBackground, { passive: true });
   syncHeaderBackground();
-  const updateWhatsApp = () => {
-    const link = document.querySelector("#wab");
-    if (link) link.href = `https://wa.me/2349030451124?text=${encodeURIComponent("Hello 24 Heelz NG, I would like to make an enquiry.")}`;
-  };
-  const oldSetMeta = setMeta;
-  setMeta = function (page) { oldSetMeta(page); updateWhatsApp(); };
-  updateWhatsApp();
 })();

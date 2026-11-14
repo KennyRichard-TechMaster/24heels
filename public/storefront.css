@@ -19,9 +19,6 @@
 .hero-visual .visual-main::after { content: ""; position: absolute; left: 17%; right: 13%; bottom: 6%; height: 10%; border-radius: 50%; background: #080405a8; filter: blur(16px); z-index: -1; }
 .hero-visual .visual-main img { padding: 0; object-fit: contain; object-position: center; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 100%); }
 .hero-note { z-index: 2; }
-.wab { width: 58px; height: 58px; display: grid !important; place-items: center; position: fixed; right: 22px; bottom: 22px; z-index: 35; border-radius: 50%; background: #25d366; color: #fff; box-shadow: 0 9px 25px #0004; animation: wa-pulse 2.3s infinite; }
-.wab svg { width: 34px; height: 34px; }
-@keyframes wa-pulse { 0%, 100% { box-shadow: 0 9px 25px #0004, 0 0 0 0 #25d36670; } 60% { box-shadow: 0 9px 25px #0004, 0 0 0 12px transparent; } }
 .marquee-section { padding: 60px 0; overflow: hidden; }
 .marquee-section + .marquee-section { padding-top: 0; }
 .marquee-shell { position: relative; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); }

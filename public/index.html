@@ -682,9 +682,9 @@
       .fl b {
         color: #fff;
       }
-      .social-links { display:flex; gap:10px; margin-top:5px; }
-      .social-links a { display:grid; place-items:center; width:34px; height:34px; border:1px solid #ffffff55; border-radius:50%; color:#fff; }
-      .social-links a:hover { background:#fff; color:var(--ink); }
+      .social-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+      .social-links a { color:#fff; text-decoration:underline; text-underline-offset:3px; }
+      .social-links a:hover { color:#f5c6d3; }
       .social-links svg { width:17px; height:17px; fill:currentColor; }
       @media (max-width: 760px) {
         .steps,
@@ -876,7 +876,6 @@
     <div class="ov" id="ov">
       <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
     </div>
-    <a class="wab" id="wab" href="https://wa.me/2349030451124?text=Hello%2024%20Heelz%20NG" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3a13 13 0 0 0-10.9 20.1L3.7 28.3l5.4-1.4A13 13 0 1 0 16 3Zm0 23.6a10.5 10.5 0 0 1-5.35-1.46l-.38-.22-3.2.84.86-3.12-.25-.4A10.57 10.57 0 1 1 16 26.6Z"/><path fill="#fff" d="M22.15 18.56c-.34-.17-2.02-1-2.33-1.1-.31-.12-.54-.17-.77.17-.23.34-.88 1.1-1.08 1.33-.2.23-.4.26-.74.09-2.02-1.01-3.35-1.8-4.68-4.08-.35-.6.35-.56 1-1.84.12-.24.06-.45-.03-.62-.09-.17-.77-1.86-1.05-2.55-.28-.67-.57-.58-.77-.59l-.66-.01c-.23 0-.6.09-.91.43-.31.34-1.2 1.17-1.2 2.86 0 1.68 1.23 3.31 1.4 3.54.17.23 2.41 3.68 5.84 5.16.82.35 1.45.57 1.95.73.82.26 1.57.22 2.16.13.66-.1 2.02-.83 2.3-1.63.29-.8.29-1.49.2-1.64-.08-.15-.3-.23-.63-.4Z"/></svg></a>
     <div class="toast" id="toast"></div>
     <footer>
       <div class="wrap">
@@ -946,15 +945,9 @@
       ];
       let P = [],
         O = [],
-        S = { wa: "", email: "" },
+        S = { email: "" },
         CART = LS.get("hz_cart", []),
         TOKEN = sessionStorage.getItem("hz_tok") || "";
-      const SHOP_CONTACT = {
-        wa: "2349030451124",
-        displayWa: "09030451124",
-        insta: "https://www.instagram.com/24heelzng?vrfl=MWhuZzdzNHA5c2o0Mw%3D%3D&utm_source=qr",
-        tiktok: "https://www.tiktok.com/@24heelzng?_r=1&_t=ZS-9BKMJad2brg",
-      };
       const api = async (m, u, b) => {
         const r = await fetch("/api/" + u, {
           method: m,
@@ -1085,7 +1078,7 @@
       function home() {
         return (
           `<div class="hero"><div class="wrap"><div><h1>Heels that <i>Elevate</i> Your Look</h1><p>Premium ladies heels designed to make you feel fiercer, feel confident, and stand out.</p><a class="btn" href="#shop">Shop Collection</a></div><div class="art">${heroArt()}</div></div></div>
-<div class="wrap perks"><div><b>Delivery across Nigeria</b>Fee confirmed on WhatsApp</div><div><b>Confirm before you pay</b>We message you first</div><div><b>Live stock</b>Availability shown on every pair</div><div><b>Chat with us</b>Questions answered on WhatsApp</div></div>
+<div class="wrap perks"><div><b>Delivery across Nigeria</b>Bank transfer available</div><div><b>Confirm before you pay</b>We message you first</div><div><b>Live stock</b>Availability shown on every pair</div><div><b>Contact us</b>Questions answered by email</div></div>
 <section class="blk"><div class="wrap"><div class="sh"><h2>Shop by category</h2></div><div class="cats">${CATS.map(
             (c) => {
               const p = P.find((x) => x.cat == c);
@@ -1119,7 +1112,7 @@
       function home() {
         const isBag = (p) => ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"].includes(p.cat);
         const heels = P.filter((p) => !isBag(p)), bags = P.filter(isBag), hero = heels.find((p) => p.imgs?.[0]) || P[0];
-        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The new edit · Lagos, Nigeria</div><h1>Heels that <i>Elevate</i> every entrance.</h1><p>Considered heels and beautiful bags for the woman whose style speaks before she does.</p><a class="btn" href="#shop">Shop the collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#shop">New arrivals</a></div></div><div class="art">${hero ? img(hero) : ""}</div></div></div><div class="wrap perks"><div><b>Nationwide delivery</b>Across Nigeria, with care</div><div><b>Curated quality</b>Every piece selected for you</div><div><b>Live availability</b>See stock before you order</div><div><b>Personal service</b>Chat with us on WhatsApp</div></div><section class="blk"><div class="wrap"><div class="sh"><h2>Shop by category</h2></div><div class="cats">${CATS.map((c) => { const p = P.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section>` + carH("The heel edit", heels.slice(0, 18), "#shop") + `<section class="blk"><div class="wrap editorial"><div class="feature">${bags[0] ? img(bags[0]) : ""}</div><div class="copy"><div class="eyebrow">The finishing touch</div><h2>Meet the bag collection.</h2><p style="margin:14px 0 24px;color:var(--mute)">Structured, chic and ready to go wherever the night takes you.</p><a class="btn" href="#shop/Tote%20bags">Shop bags</a></div></div></section>` + carH("Bags to be seen with", bags.slice(0, 18), "#shop/Tote%20bags") + `<div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
+        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The new edit · Lagos, Nigeria</div><h1>Heels that <i>Elevate</i> every entrance.</h1><p>Considered heels and beautiful bags for the woman whose style speaks before she does.</p><a class="btn" href="#shop">Shop the collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#shop">New arrivals</a></div></div><div class="art">${hero ? img(hero) : ""}</div></div></div><div class="wrap perks"><div><b>Nationwide delivery</b>Across Nigeria, with care</div><div><b>Curated quality</b>Every piece selected for you</div><div><b>Live availability</b>See stock before you order</div><div><b>Personal service</b>Contact us by email</div></div><section class="blk"><div class="wrap"><div class="sh"><h2>Shop by category</h2></div><div class="cats">${CATS.map((c) => { const p = P.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section>` + carH("The heel edit", heels.slice(0, 18), "#shop") + `<section class="blk"><div class="wrap editorial"><div class="feature">${bags[0] ? img(bags[0]) : ""}</div><div class="copy"><div class="eyebrow">The finishing touch</div><h2>Meet the bag collection.</h2><p style="margin:14px 0 24px;color:var(--mute)">Structured, chic and ready to go wherever the night takes you.</p><a class="btn" href="#shop/Tote%20bags">Shop bags</a></div></div></section>` + carH("Bags to be seen with", bags.slice(0, 18), "#shop/Tote%20bags") + `<div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
       }
       function shop(f) {
         const list = f ? P.filter((p) => p.cat == f) : P, isBag = (p) => ["Tote bags", "Mini bags", "Clutches", "Crossbody bags"].includes(p.cat), heels = list.filter((p) => !isBag(p)), bags = list.filter(isBag);
@@ -1133,7 +1126,7 @@
         const bags = P.filter(isBag);
         const heroHeel = heels.find((p) => p.imgs?.[0]) || heels[0];
         const heroBag = bags.find((p) => p.imgs?.[0]) || bags[0];
-        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The heel & handbag edit</div><h1>Heels that <i>Elevate</i> your look.</h1><p>Statement heels and ladies' handbags, selected to make every entrance unforgettable.</p><a class="btn" href="#shop">Shop collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Shop heels</a><a href="#shop/Tote%20bags">Shop handbags</a></div></div><div class="art"><div class="hero-shoe">${heroHeel ? img(heroHeel) : ""}</div><div class="hero-bag">${heroBag ? img(heroBag) : ""}</div></div></div></div><div class="wrap perks"><div><b>Fast delivery</b>Across Nigeria</div><div><b>Secure payment</b>Confirmed first</div><div><b>Premium quality</b>Curated pieces</div><div><b>24/7 support</b>WhatsApp us</div></div><section class="blk home-categories"><div class="wrap"><div class="sh"><h2>Shop heel category</h2></div><div class="cats">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="home-catalogue">${homeCar("Featured heels", heels.slice(0, 15), "#shop")}${homeCar("Ladies' handbags", bags.slice(0, 15), "#shop/Tote%20bags")}</section><div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
+        return `<div class="hero"><div class="wrap"><div><div class="eyebrow">The heel & handbag edit</div><h1>Heels that <i>Elevate</i> your look.</h1><p>Statement heels and ladies' handbags, selected to make every entrance unforgettable.</p><a class="btn" href="#shop">Shop collection</a><div class="collection-tabs"><a href="#shop/Stilettos">Shop heels</a><a href="#shop/Tote%20bags">Shop handbags</a></div></div><div class="art"><div class="hero-shoe">${heroHeel ? img(heroHeel) : ""}</div><div class="hero-bag">${heroBag ? img(heroBag) : ""}</div></div></div></div><div class="wrap perks"><div><b>Fast delivery</b>Across Nigeria</div><div><b>Secure payment</b>Confirmed first</div><div><b>Premium quality</b>Curated pieces</div><div><b>24/7 support</b>Email us</div></div><section class="blk home-categories"><div class="wrap"><div class="sh"><h2>Shop heel category</h2></div><div class="cats">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat == c); return `<button class="cat" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="home-catalogue">${homeCar("Featured heels", heels.slice(0, 15), "#shop")}${homeCar("Ladies' handbags", bags.slice(0, 15), "#shop/Tote%20bags")}</section><div class="band"><h2>Because every step deserves style.</h2><a class="btn alt" href="#shop">Shop now</a></div><section class="blk"><div class="wrap"><div class="sh"><h2>How ordering works</h2></div>${steps()}</div></section>`;
       }
 
       /* Fashion boutique home: curated, editorial and inventory-driven. */
@@ -1141,7 +1134,7 @@
       function home() {
         const isBag = (p) => BAG_CATS.includes(p.cat), heels = P.filter((p) => !isBag(p)), bags = P.filter(isBag);
         const story = bags[7] || bags[0];
-        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${main ? img(main) : ""}</div><div class="visual-float">${bag ? img(bag) : ""}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Confirmed on WhatsApp</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p=heels.find((x)=>x.cat===c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section><section class="fashion-section" style="padding-top:0"><div class="wrap"><div class="section-kicker">Shop with confidence</div><h2 class="section-title" style="margin-bottom:28px">The 24 Heelz experience.</h2><div class="service-grid"><article class="service-card"><span>01</span><b>Chosen with intention</b><p>Every heel and handbag is selected for a polished silhouette, memorable finish and confident styling.</p></article><article class="service-card"><span>02</span><b>Fit help before you buy</b><p>Use the size guide or speak with us on WhatsApp before placing your order.</p></article><article class="service-card"><span>03</span><b>Real people, real support</b><p>We personally confirm product availability, delivery and payment before an order is finalised.</p></article></div></div></section><section class="journal"><div class="section-kicker" style="color:#f3bfce">The 24 Heelz journal</div><h2>Style begins with the details.</h2><p>Read the lookbook for event-ready styling inspiration, gift ideas and the pieces we are loving now.</p><a class="btn" href="#lookbook">Open the lookbook</a></section>`;
+        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${main ? img(main) : ""}</div><div class="visual-float">${bag ? img(bag) : ""}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Bank transfer only</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p=heels.find((x)=>x.cat===c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section><section class="fashion-section" style="padding-top:0"><div class="wrap"><div class="section-kicker">Shop with confidence</div><h2 class="section-title" style="margin-bottom:28px">The 24 Heelz experience.</h2><div class="service-grid"><article class="service-card"><span>01</span><b>Chosen with intention</b><p>Every heel and handbag is selected for a polished silhouette, memorable finish and confident styling.</p></article><article class="service-card"><span>02</span><b>Fit help before you buy</b><p>Use the size guide or contact us before placing your order.</p></article><article class="service-card"><span>03</span><b>Real people, real support</b><p>We personally confirm product availability, delivery and payment before an order is finalised.</p></article></div></div></section><section class="journal"><div class="section-kicker" style="color:#f3bfce">The 24 Heelz journal</div><h2>Style begins with the details.</h2><p>Read the lookbook for event-ready styling inspiration, gift ideas and the pieces we are loving now.</p><a class="btn" href="#lookbook">Open the lookbook</a></section>`;
       }
 
       */
@@ -1151,7 +1144,7 @@
         const bags = P.filter(isBag);
         const story = bags[7] || bags[0];
         const heroImage = '<img src="/assets/Glamorous%20Red%20Couture%20with%20Handbag.png" alt="Glamorous red couture with handbag" fetchpriority="high">';
-        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${heroImage}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Confirmed on WhatsApp</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat === c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section>`;
+        return `<section class="fashion-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated heels and beautiful ladies’ handbags selected for weddings, weekends and every unforgettable entrance.</p><a class="btn" href="#shop">Shop new arrivals</a></div><div class="hero-visual"><div class="visual-main">${heroImage}</div><span class="hero-note">Curated for her</span></div></div></section><section class="promise-bar"><div class="wrap"><div><b>Nationwide delivery</b>Delivered across Nigeria</div><div><b>Personal styling</b>We help you choose</div><div><b>Live stock</b>Only available pieces shown</div><div><b>Secure ordering</b>Bank transfer only</div></div></section><section class="fashion-section"><div class="wrap"><div class="section-kicker">Find your silhouette</div><h2 class="section-title">The heel wardrobe.</h2><div class="collection-grid">${HEEL_CATS.map((c) => { const p = heels.find((x) => x.cat === c); return `<button class="collection-tile" data-cat="${c}">${p ? img(p) : ""}<span>${c}</span></button>`; }).join("")}</div></div></section><section class="showcase">${homeCar("Featured heels", heels.slice(0,15), "#shop")}${homeCar("Ladies’ handbag collection", bags.slice(0,15), "#shop/Tote%20bags")}</section><section class="fashion-section"><div class="wrap split-story"><div class="story-image">${story ? img(story) : ""}</div><div class="story-copy"><div class="section-kicker">The finishing touch</div><h2>Handbags made for the moment.</h2><p>From sculpted mini bags to sophisticated totes, find a piece that completes the look—not competes with it.</p><a class="btn" href="#shop/Tote%20bags">Explore handbags</a></div></div></section>`;
       }
 
       const par = (x) =>
@@ -1162,19 +1155,19 @@
           .join("");
       const page = (h, b) => `<div class="wrap page"><h1>${h}</h1>${b}</div>`;
       const steps = () =>
-        `<div class="steps"><div><b>1. Pick your pairs</b>Open any pair to see its price, sizes and how many are left.</div><div><b>2. Press ORDER NOW</b>Enter your name, WhatsApp number, email and delivery address.</div><div><b>3. We confirm on WhatsApp</b>We confirm availability, delivery fee and payment with you.</div></div>`;
+        `<div class="steps"><div><b>1. Pick your pairs</b>Open any pair to see its price, sizes and how many are left.</div><div><b>2. Press ORDER NOW</b>Enter your name, phone number, email and delivery address.</div><div><b>3. We confirm your payment</b>We confirm availability, delivery fee and payment with you.</div></div>`;
       function newIn() {
         const restocked = location.hash.startsWith("#new/restocked"), list = restocked ? P.filter((p) => p.restocked) : P.slice(0, 30);
         if (restocked)
           return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Back by popular demand</div><h1 style="font-size:52px">Restocked</h1><p style="color:var(--mute);max-width:58ch">Freshly replenished pieces, added and managed directly by 24 Heelz NG.</p></div>` + carH("Restocked styles", list, "#shop") + (list.length ? "" : `<div class="wrap" style="padding-bottom:52px"><p>No restocked pieces are live right now. Check back soon.</p></div>`);
-        return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Freshly curated</div><h1 style="font-size:52px">New in</h1><p style="color:var(--mute);max-width:58ch">The latest heel and handbag arrivals, chosen to make an occasion of every outfit.</p></div>` + carH("Just landed", P.slice(0, 30), "#shop") + `<section class="blk"><div class="wrap"><div class="cgrid"><div><b>Need a second opinion?</b><p>Send us a photo of your outfit on WhatsApp and we will help you choose the right finish.</p></div><div><b>Always current</b><p>Availability is managed live in our boutique. Once a piece is gone, it is marked unavailable.</p></div></div></div></section>`;
+        return `<div class="wrap" style="padding-top:48px"><div class="eyebrow">Freshly curated</div><h1 style="font-size:52px">New in</h1><p style="color:var(--mute);max-width:58ch">The latest heel and handbag arrivals, chosen to make an occasion of every outfit.</p></div>` + carH("Just landed", P.slice(0, 30), "#shop") + `<section class="blk"><div class="wrap"><div class="cgrid"><div><b>Need a second opinion?</b><p>Send us a photo of your outfit by email and we will help you choose the right finish.</p></div><div><b>Always current</b><p>Availability is managed live in our boutique. Once a piece is gone, it is marked unavailable.</p></div></div></div></section>`;
       }
       function lookbook() {
         const picks = P.filter((p) => p.imgs?.[0]).slice(0, 6);
         return `<div class="wrap page" style="max-width:1180px"><div class="eyebrow">The 24 Heelz journal</div><h1>Style it your way.</h1><p>From RSVP-ready shine to polished everyday pieces, build a look that feels entirely like you.</p><div class="editorial" style="margin:28px 0"><div class="feature">${picks[1] ? img(picks[1]) : ""}</div><div class="copy"><h2>From day plans to after-dark.</h2><p style="margin:12px 0 22px">A refined bag grounds a dramatic heel. Match tones, then let the silhouette do the talking.</p><a class="btn" href="#shop">Shop the edit</a></div></div><div class="cats">${picks.map((p) => `<button class="cat" data-cat="${p.cat}">${img(p)}<span>${esc(p.cat)}</span></button>`).join("")}</div><h2>Our styling notes</h2><div class="steps"><div><b>Make one piece the statement</b>Choose a sculptural heel or a standout bag, then keep the rest beautifully simple.</div><div><b>Think in textures</b>Satin, metallic and patent finishes instantly create a more considered evening look.</div><div><b>Comfort is part of the look</b>Use the size guide and ask us about fit before you order for a confident step.</div></div></div>`;
       }
       function giftGuide() {
-        return page("The gift guide", `<p>Give a beautiful piece she will reach for again and again. Our edit includes versatile handbags and event-ready heels for birthdays, weddings and thoughtful just-because moments.</p><div class="cgrid"><div><b>For the minimalist</b><p>Choose a black, nude or cocoa bag with a clean, structured silhouette.</p></div><div><b>For the celebrant</b><p>Choose metallic heels, soft satin finishes or a compact statement clutch.</p></div><div><b>For the everyday muse</b><p>A comfortable block heel or elegant mini bag always earns its place.</p></div><div><b>Need help?</b><p>Tell us her style, size and your budget on WhatsApp for a personal recommendation.</p></div></div><p style="margin-top:22px"><a class="btn" href="#shop">Shop gifts</a> <a class="btn alt" href="#contact">Ask for a recommendation</a></p>`);
+        return page("The gift guide", `<p>Give a beautiful piece she will reach for again and again. Our edit includes versatile handbags and event-ready heels for birthdays, weddings and thoughtful just-because moments.</p><div class="cgrid"><div><b>For the minimalist</b><p>Choose a black, nude or cocoa bag with a clean, structured silhouette.</p></div><div><b>For the celebrant</b><p>Choose metallic heels, soft satin finishes or a compact statement clutch.</p></div><div><b>For the everyday muse</b><p>A comfortable block heel or elegant mini bag always earns its place.</p></div><div><b>Need help?</b><p>Tell us her style, size and your budget by email for a personal recommendation.</p></div></div><p style="margin-top:22px"><a class="btn" href="#shop">Shop gifts</a> <a class="btn alt" href="#contact">Ask for a recommendation</a></p>`);
       }
       function about() {
         return page(
@@ -1207,18 +1200,18 @@
         ];
         return page(
           "Size guide",
-          `<p>Sizes are EU sizes. Stand on a sheet of paper, mark your heel and your longest toe, then measure the distance in cm. If you are between two sizes, choose the larger one.</p><table class="sz"><tr><th>EU size</th><th>Foot length (cm)</th></tr>${r.map((x) => `<tr><td>${x[0]}</td><td>${x[1].toFixed(1)}</td></tr>`).join("")}</table><p class="mut">Measurements are approximate and fit can vary by style. Not sure? Message us on WhatsApp before you order.</p><a class="btn" href="#shop">Shop heels</a>`,
+          `<p>Sizes are EU sizes. Stand on a sheet of paper, mark your heel and your longest toe, then measure the distance in cm. If you are between two sizes, choose the larger one.</p><table class="sz"><tr><th>EU size</th><th>Foot length (cm)</th></tr>${r.map((x) => `<tr><td>${x[0]}</td><td>${x[1].toFixed(1)}</td></tr>`).join("")}</table><p class="mut">Measurements are approximate and fit can vary by style. Not sure? Contact us before you order.</p><a class="btn" href="#shop">Shop heels</a>`,
         );
       }
       function faq() {
         const q = [
           [
             "How do I place an order?",
-            "Open a pair, choose your size and press Select this pair. When you have everything you want, press ORDER NOW, fill in your details and send the order on WhatsApp.",
+            "Open a pair, choose your size and press Select this pair. When you have everything you want, press ORDER NOW, fill in your details and continue to bank transfer.",
           ],
           [
             "Do I need an account?",
-            "No. We only need your name, WhatsApp number, email and delivery address.",
+            "No. We only need your name, Phone number, email and delivery address.",
           ],
           [
             "How do I know if a pair is available?",
@@ -1245,42 +1238,17 @@
       }
       function contact() {
         const rows = [
-          [
-            "WhatsApp",
-            `<a href="https://wa.me/${SHOP_CONTACT.wa}" target="_blank" rel="noopener"><u>${SHOP_CONTACT.displayWa}</u></a>`,
-          ],
-          S.phone && [
-            "Phone",
-            `<a href="tel:${esc(S.phone)}"><u>${esc(S.phone)}</u></a>`,
-          ],
-          S.email && [
-            "Email",
-            `<a href="mailto:${esc(S.email)}"><u>${esc(S.email)}</u></a>`,
-          ],
+          S.phone && ["Phone", `<a href="tel:${esc(S.phone)}"><u>${esc(S.phone)}</u></a>`],
+          S.email && ["Email", `<a href="mailto:${esc(S.email)}"><u>${esc(S.email)}</u></a>`],
           S.address && ["Address", esc(S.address)],
           S.hours && ["Opening hours", esc(S.hours)],
-          ["Instagram", `<a href="${SHOP_CONTACT.insta}" target="_blank" rel="noopener"><u>Visit @24heelzng</u></a>`],
-          ["TikTok", `<a href="${SHOP_CONTACT.tiktok}" target="_blank" rel="noopener"><u>Visit @24heelzng</u></a>`],
+          S.insta && ["Instagram", `<a href="${esc(S.insta)}" target="_blank" rel="noopener"><u>Visit @24heelzng</u></a>`],
+          S.tiktok && ["TikTok", `<a href="${esc(S.tiktok)}" target="_blank" rel="noopener"><u>Visit @24heelzng</u></a>`],
         ].filter(Boolean);
-        return page(
-          "Contact us",
-          `<p>Message us on WhatsApp for sizes, availability, delivery fees or help with an order.</p><div class="cgrid">${rows.map((r) => `<div><b>${r[0]}</b>${r[1]}</div>`).join("")}</div><h2>Send us a message</h2><form id="cf" style="max-width:460px"><label>Your name</label><input name="n" required><label>Message</label><textarea name="m" rows="4" required></textarea><button class="btn" style="margin-top:14px">Send on WhatsApp</button></form>`,
-        );
+        return page("Contact us", `<p>Contact us for sizes, availability, delivery fees or help with an order.</p><div class="cgrid">${rows.map((r) => `<div><b>${r[0]}</b>${r[1]}</div>`).join("")}</div><h2>Send us a message</h2><form id="cf" style="max-width:460px"><label>Your name</label><input name="n" required><label>Message</label><textarea name="m" rows="4" required></textarea><button class="btn" style="margin-top:14px">Send email</button></form>`);
       }
       const bindContact = () => {
-        $("#cf").onsubmit = (e) => {
-          e.preventDefault();
-          const f = Object.fromEntries(new FormData(e.target));
-          window.open(
-            "https://wa.me/" +
-              SHOP_CONTACT.wa +
-              "?text=" +
-              encodeURIComponent(
-                "Hello 24 Heelz NG, I am " + f.n + ".\n" + f.m,
-              ),
-            "_blank",
-          );
-        };
+        $("#cf").onsubmit = (e) => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); location.href = `mailto:${S.email}?subject=${encodeURIComponent("Website enquiry")}&body=${encodeURIComponent("Hello 24 Heelz NG, I am " + f.n + ".\n\n" + f.m)}`; };
       };
       const TT = {
         home: "24 Heelz NG — Quality heels delivered across Nigeria",
@@ -1299,15 +1267,7 @@
           m.content =
             (TT[pg] || TT.home) +
             ". Stilettos, block heels, strappy sandals, kitten heels and platforms.";
-        $("#ft").innerHTML =
-          `<div class="fl"><b>Shop</b><a href="#shop">All products</a><a href="#new">New in</a><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#gifts">Gift guide</a></div><div class="fl"><b>Help</b><a href="#sizes">Size guide</a><a href="#delivery">Delivery &amp; returns</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="#admin">Admin</a></div><div class="fl"><b>Contact</b><a href="https://wa.me/${esc(S.wa)}" target="_blank" rel="noopener">WhatsApp 09030451124</a>${S.phone ? `<span>${esc(S.phone)}</span>` : ""}<a href="mailto:${esc(S.email)}">${esc(S.email)}</a>${S.address ? `<span>${esc(S.address)}</span>` : ""}${S.hours ? `<span>${esc(S.hours)}</span>` : ""}<div class="social-links">${S.insta ? `<a href="${esc(S.insta)}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5ZM17.8 6.2a1.2 1.2 0 1 1-1.2 1.2 1.2 1.2 0 0 1 1.2-1.2Z"/></svg></a>` : ""}${S.tiktok ? `<a href="${esc(S.tiktok)}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.7 3c.3 2.2 1.5 3.5 3.6 3.7v3.1a7.3 7.3 0 0 1-3.5-1v6.8a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1v3.1a2.4 2.4 0 1 0 1.5 2.2V3h3Z"/></svg></a>` : ""}</div></div>`;
-        const footerContact = $("#ft .fl:last-child");
-        const footerWhatsApp = footerContact.querySelector('a[href^="https://wa.me/"]');
-        footerWhatsApp.href = "https://wa.me/" + SHOP_CONTACT.wa;
-        if (!footerContact.querySelector(".social-links")) footerContact.insertAdjacentHTML("beforeend", `<div class="social-links"><a href="${SHOP_CONTACT.insta}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5ZM17.8 6.2a1.2 1.2 0 1 1-1.2 1.2 1.2 1.2 0 0 1 1.2-1.2Z"/></svg></a><a href="${SHOP_CONTACT.tiktok}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.7 3c.3 2.2 1.5 3.5 3.6 3.7v3.1a7.3 7.3 0 0 1-3.5-1v6.8a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1v3.1a2.4 2.4 0 1 0 1.5 2.2V3h3Z"/></svg></a></div>`);
-        const w = $("#wab");
-        w.href = "https://wa.me/" + SHOP_CONTACT.wa;
-        w.style.display = pg == "admin" ? "none" : "";
+        $("#ft").innerHTML = `<div class="fl"><b>Shop</b><a href="#shop">All products</a><a href="#new">New in</a><a href="#shop/Stilettos">Heels</a><a href="#shop/Tote%20bags">Bags</a><a href="#gifts">Gift guide</a></div><div class="fl"><b>Help</b><a href="#sizes">Size guide</a><a href="#delivery">Delivery &amp; returns</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="#admin">Admin</a></div><div class="fl"><b>Contact</b>${S.phone ? `<a href="tel:${esc(S.phone)}">${esc(S.phone)}</a>` : ""}${S.email ? `<a href="mailto:${esc(S.email)}">${esc(S.email)}</a>` : ""}${S.address ? `<span>${esc(S.address)}</span>` : ""}${S.hours ? `<span>${esc(S.hours)}</span>` : ""}<div class="social-links">${S.insta ? `<a href="${esc(S.insta)}" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>` : ""}${S.tiktok ? `<a href="${esc(S.tiktok)}" target="_blank" rel="noopener" aria-label="TikTok">TikTok</a>` : ""}</div></div>`;
       }
       /* product modal */
       let selSize = null;
@@ -1329,7 +1289,7 @@
           [BAG_CATS.includes(p.cat) ? "Size" : "Sizes (EU)", p.sizes],
         ].filter((x) => x[1]);
         $("#modal").innerHTML =
-          `<button class="x" aria-label="Close">×</button><div class="pd"><div><div class="im" id="mainIm">${img(p)}</div>${im.length > 1 ? `<div class="thumbs">${im.map((u, i) => `<button data-th="${i}" class="${i ? "" : "on"}" aria-label="Photo ${i + 1}"><img src="${u}" alt=""></button>`).join("")}</div>` : ""}</div><div><h2>${esc(p.name)}</h2><p class="price" style="font-size:26px;margin:8px 0">${N(p.price)}</p><p class="st ${s == "out" ? "no" : "ok"}">${s == "out" ? "Not available" : s == "low" ? `Available — only ${p.stock} left` : `Available — ${p.stock} in stock`}</p><p style="margin:12px 0">${esc(p.desc)}</p><dl class="det">${det.map((d) => `<dt>${d[0]}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl><b>Size</b><div class="sizes">${sz.map((z, i) => `<button class="${i ? "" : "on"}" data-sz="${esc(z)}">${esc(z)}</button>`).join("")}</div><button class="btn" id="addB" ${s == "out" ? "disabled" : ""}>${s == "out" ? "Out of stock" : "Select this pair"}</button><p class="mut" style="margin-top:12px">Delivery fee is confirmed on WhatsApp. <a href="#delivery" onclick="closeM()"><u>Delivery &amp; returns</u></a> · <a href="#sizes" onclick="closeM()"><u>Size guide</u></a></p></div></div>`;
+          `<button class="x" aria-label="Close">×</button><div class="pd"><div><div class="im" id="mainIm">${img(p)}</div>${im.length > 1 ? `<div class="thumbs">${im.map((u, i) => `<button data-th="${i}" class="${i ? "" : "on"}" aria-label="Photo ${i + 1}"><img src="${u}" alt=""></button>`).join("")}</div>` : ""}</div><div><h2>${esc(p.name)}</h2><p class="price" style="font-size:26px;margin:8px 0">${N(p.price)}</p><p class="st ${s == "out" ? "no" : "ok"}">${s == "out" ? "Not available" : s == "low" ? `Available — only ${p.stock} left` : `Available — ${p.stock} in stock`}</p><p style="margin:12px 0">${esc(p.desc)}</p><dl class="det">${det.map((d) => `<dt>${d[0]}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl><b>Size</b><div class="sizes">${sz.map((z, i) => `<button class="${i ? "" : "on"}" data-sz="${esc(z)}">${esc(z)}</button>`).join("")}</div><button class="btn" id="addB" ${s == "out" ? "disabled" : ""}>${s == "out" ? "Out of stock" : "Select this pair"}</button><p class="mut" style="margin-top:12px">Delivery fee is confirmed after your order. <a href="#delivery" onclick="closeM()"><u>Delivery &amp; returns</u></a> · <a href="#sizes" onclick="closeM()"><u>Size guide</u></a></p></div></div>`;
         $("#ov").classList.add("show");
         $("#modal .x").onclick = closeM;
         $("#modal")
@@ -1403,7 +1363,7 @@
               return `<div class="row"><div class="th">${img(p)}</div><div style="flex:1"><b>${esc(p.name)}</b><br>Size ${esc(c.size)} · ${N(p.price)}</div><button data-d="${i}" class="btn alt sm">−</button><b>${c.qty}</b><button data-u="${i}" class="btn alt sm">+</button></div>`;
             },
           ).join("")}
-<h3 style="margin:18px 0 4px">Your details</h3><form id="of"><div class="grid2"><div><label>Full name *</label><input name="name" required></div><div><label>WhatsApp number *</label><input name="wa" required placeholder="e.g. 0803 000 0000" inputmode="tel" pattern="(0[789][0-9]{9}|234[789][0-9]{9})"></div><div><label>Email (optional)</label><input name="email" type="email"></div><div><label>City / State *</label><input name="city" required></div></div><label>Delivery address *</label><textarea name="addr" rows="2" required></textarea><label>Note (colour, extra size, etc.)</label><input name="note"><button class="order-btn checkout-whatsapp" style="margin-top:16px;width:100%"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M27.1 4.8A15.8 15.8 0 0 0 2.3 23.9L.7 31.3l7.6-1.5A15.8 15.8 0 1 0 27.1 4.8ZM16 28a12 12 0 0 1-6.1-1.7l-.4-.2-4.5.9.9-4.4-.3-.5A12 12 0 1 1 16 28Zm6.6-8.9c-.4-.2-2.3-1.1-2.7-1.3-.4-.1-.7-.2-1 .2s-1 1.3-1.2 1.5c-.2.3-.5.3-.9.1a9.8 9.8 0 0 1-2.9-1.8 10.8 10.8 0 0 1-2-2.5c-.2-.4 0-.6.1-.8l.6-.7c.2-.2.2-.4.3-.7.1-.2 0-.5-.1-.7l-1.3-3c-.3-.7-.6-.6-1-.6h-.8c-.3 0-.7.1-1 .5s-1.4 1.3-1.4 3.2 1.5 3.8 1.7 4.1a13.8 13.8 0 0 0 5.3 5c.8.4 1.5.7 2 .9.9.3 1.7.3 2.3.2.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.2-.4-.3-.8-.5Z" fill="currentColor"/></svg><span>Place order on WhatsApp</span></button></form>`;
+<h3 style="margin:18px 0 4px">Your details</h3><form id="of"><div class="grid2"><div><label>Full name *</label><input name="name" required></div><div><label>Phone number *</label><input name="phone" required placeholder="e.g. 0803 000 0000" inputmode="tel" pattern="(0[789][0-9]{9}|234[789][0-9]{9})"></div><div><label>Email (optional)</label><input name="email" type="email"></div><div><label>City / State *</label><input name="city" required></div></div><label>Delivery address *</label><textarea name="addr" rows="2" required></textarea><label>Note (colour, extra size, etc.)</label><input name="note"><button class="order-btn" style="margin-top:16px;width:100%">Continue to bank transfer</button></form>`;
         $("#ov").classList.add("show");
         $("#modal .x").onclick = closeM;
         $("#modal")
@@ -1438,48 +1398,56 @@
       async function placeOrder(f) {
         if (placing) return;
         placing = true;
-        let o;
         try {
-          o = await api("POST", "orders", {
-            ...f,
-            items: CART.map((c) => ({ id: c.id, size: c.size, qty: c.qty })),
-          });
-        } catch (e) {
-          placing = false;
-          return toast(e.message);
-        }
+          const order = await api("POST", "orders", { ...f, items: CART.map((c) => ({ id: c.id, size: c.size, qty: c.qty })) });
+          CART = []; LS.set("hz_cart", CART); LS.set("hz_order_" + order.id, order); cartUI(); closeM(); location.hash = "order/" + order.id;
+        } catch (e) { toast(e.message); }
         placing = false;
-        const items = o.items,
-          total = o.total;
-        const msg = `NEW ORDER ${o.id}\nName: ${o.name}\nWhatsApp: ${o.wa}\nEmail: ${o.email}\nCity: ${o.city}\nAddress: ${o.addr}\nNote: ${o.note || "-"}\n\nItems:\n${items.map((i) => `- ${i.name} (size ${i.size}) x${i.qty} = ${N(i.qty * i.price)}`).join("\n")}\n\nTotal: ${N(total)}`;
-        const wa = `https://wa.me/${SHOP_CONTACT.wa}?text=${encodeURIComponent(msg)}`,
-          mail = `mailto:${S.email}?subject=${encodeURIComponent("New order " + o.id)}&body=${encodeURIComponent(msg)}`;
-        CART = [];
-        LS.set("hz_cart", CART);
-        cartUI();
-        $("#modal").innerHTML =
-          `<button class="x" aria-label="Close">×</button><h2>Order ${o.id} received</h2><p style="margin:10px 0">Last step: send your order to us so we can confirm it.</p><a class="btn" style="display:block;text-align:center;margin-bottom:10px" href="${wa}" target="_blank" rel="noopener">Send on WhatsApp</a><a class="btn alt" style="display:block;text-align:center" href="${mail}">Send by email</a>`;
-        $("#modal .x").onclick = closeM;
-        window.open(wa, "_blank");
       }
+      let CURRENT_ORDER = null;
+      function orderPage(id) {
+        const order = CURRENT_ORDER || LS.get("hz_order_" + id, null);
+        if (!order) return page("Order", "<p>Order not found on this device.</p>");
+        const account = (number, name, bank) => `<div class="cgrid"><div><b>${esc(bank)}</b><p>${esc(name)}</p><strong>${esc(number)}</strong> <button class="btn alt sm" data-copy="${esc(number)}">Copy</button></div></div>`;
+        return page("Bank transfer", `<p><b>Order number:</b> ${esc(order.id)}</p><p><b>Status:</b> <span class="pill">${esc(order.status)}</span></p><h2>Order summary</h2><div class="cgrid">${order.items.map((item) => `<div><b>${esc(item.name)}</b><br>Size ${esc(item.size)} · ${item.qty} × ${N(item.price)}</div>`).join("")}</div><p class="price">Total ${N(order.total)}</p><h2>Transfer to either account</h2>${account(S.bank1Number, S.bank1Name, S.bank1Bank)}${account(S.bank2Number, S.bank2Name, S.bank2Bank)}<p>Transfer the exact amount and use your order number as the payment reference.</p>${order.status === "Awaiting Payment" ? '<button class="btn payment-confirm" data-paid>Confirm Payment</button>' : order.status === "Payment Confirming" ? '<p><b>Thanks! We are confirming your payment. This usually takes a few minutes.</b></p>' : ""}`);
+      }
+      const bindOrder = () => {
+        document.querySelectorAll("[data-copy]").forEach((button) => button.onclick = async () => { await navigator.clipboard.writeText(button.dataset.copy); toast("Account number copied"); });
+        const paid = $("[data-paid]");
+        if (paid) paid.onclick = async () => {
+          const order = CURRENT_ORDER || LS.get("hz_order_" + location.hash.split("/")[1], null);
+          if (!order) return toast("Order not found");
+          paid.disabled = true;
+          paid.innerHTML = '<span class="payment-spinner" aria-hidden="true"></span>Confirming payment…';
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          try {
+            CURRENT_ORDER = await api("POST", "orders/" + order.id + "/paid", {});
+            LS.set("hz_order_" + CURRENT_ORDER.id, CURRENT_ORDER);
+            route();
+          } catch (e) {
+            paid.disabled = false;
+            paid.textContent = "Confirm Payment";
+            toast(e.message);
+          }
+        };
+      };
       /* admin */
       let AUTH = !!TOKEN,
         TAB = "orders";
       function admin() {
         if (!AUTH)
           return `<div class="wrap" style="max-width:380px;padding:60px 20px"><h1>Admin login</h1><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in</button></form></div>`;
-        return `<div class="wrap adm"><div class="sh"><h1>Dashboard</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${O.filter((o) => o.status == "New").length} new)` : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
+        const checks = O.filter((o) => o.status == "Payment Confirming").length;
+        return `<div class="wrap adm"><div class="sh"><h1>Dashboard${checks ? ` <span class="payment-alert">${checks} payment check${checks == 1 ? "" : "s"} waiting</span>` : ""}</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${checks} payment checks)` : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
       }
       function tab() {
         const tb = $("#tb");
         if (!tb) return;
-        if (TAB == "orders")
-          tb.innerHTML = O.length
-            ? O.map(
-                (o, i) =>
-                  `<div class="ord"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${o.id}</b><span>${esc(o.date)}</span><span class="pill">${esc(o.status)}</span></div><p><b>${esc(o.name)}</b> · WhatsApp <a href="https://wa.me/${esc(String(o.wa).replace(/\D/g, "").replace(/^0/, "234"))}" target="_blank"><u>${esc(o.wa)}</u></a> · ${esc(o.email)}</p><p>${esc(o.city)} — ${esc(o.addr)}</p><p>${o.items.map((x) => `${esc(x.name)} (size ${esc(x.size)}) ×${x.qty}`).join("; ")}</p>${o.note ? `<p>Note: ${esc(o.note)}</p>` : ""}<p class="price">Total ${N(o.total)}</p><button class="btn alt sm" data-st="${i}">Mark ${o.status == "New" ? "confirmed" : o.status == "Confirmed" ? "delivered" : "new"}</button> <button class="btn alt sm" data-do="${i}">Delete</button></div>`,
-              ).join("")
-            : "<p>No orders yet. New orders placed on this browser appear here.</p>";
+        if (TAB == "orders") {
+          const sorted = [...O].sort((a,b) => (b.status === "Payment Confirming") - (a.status === "Payment Confirming"));
+          tb.innerHTML = sorted.length ? sorted.map((o) => `<div class="ord ${o.status === "Payment Confirming" ? "payment-check" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${esc(o.id)}</b><span>${esc(o.date)}</span><span class="pill">${esc(o.status)}</span></div><p><b>${esc(o.name)}</b> · Phone ${esc(o.phone || "")} · ${esc(o.email || "No email")}</p><p>${esc(o.city)} — ${esc(o.addr)}</p><p>${o.items.map((x) => `${esc(x.name)} (size ${esc(x.size)}) ×${x.qty}`).join("; ")}</p>${o.note ? `<p>Note: ${esc(o.note)}</p>` : ""}<p class="price">Total ${N(o.total)}</p><div class="admin-order-actions">${o.status === "Payment Confirming" ? `<button class="btn sm" data-order-status="Confirmed" data-order-id="${esc(o.id)}">Confirm Payment</button><button class="btn alt sm" data-order-status="Cancelled" data-order-id="${esc(o.id)}">Reject / Not Paid</button>` : ""}${o.status === "Confirmed" ? `<button class="btn sm" data-order-status="Processing" data-order-id="${esc(o.id)}">Mark Processing</button>` : ""}${o.status === "Processing" ? `<button class="btn sm" data-order-status="Completed" data-order-id="${esc(o.id)}">Mark Completed</button>` : ""}</div><button class="btn alt sm" data-do="${O.indexOf(o)}">Delete</button></div>`).join("") : "<p>No orders yet.</p>";
+          return;
+        }
         if (TAB == "products") {
           const categories = [...CATS, ...P.map((p) => p.cat).filter((c) => !CATS.includes(c))];
           const catalogue = categories.map((category) => {
@@ -1498,8 +1466,7 @@
             ).join("");
           $("#bulk").onchange = bulkAdd;
         }
-        if (TAB == "settings")
-          tb.innerHTML = `<form id="sf" style="max-width:640px"><div class="grid2"><div><label>Admin WhatsApp (country code, no +)</label><input name="wa" value="${esc(S.wa)}"></div><div><label>Admin / shop email</label><input name="email" value="${esc(S.email)}"></div><div><label>Phone (shown on Contact page)</label><input name="phone" value="${esc(S.phone)}"></div><div><label>Instagram URL</label><input name="insta" value="${esc(S.insta)}"></div><div><label>TikTok URL</label><input name="tiktok" value="${esc(S.tiktok)}"></div><div><label>Shop address</label><input name="address" value="${esc(S.address)}"></div><div><label>Opening hours</label><input name="hours" value="${esc(S.hours)}"></div></div><label>About text</label><textarea name="about" rows="4">${esc(S.about)}</textarea><label>Delivery information</label><textarea name="delivery" rows="3">${esc(S.delivery)}</textarea><label>Returns and exchanges</label><textarea name="returns" rows="3">${esc(S.returns)}</textarea><label>Payment information</label><textarea name="payment" rows="2">${esc(S.payment)}</textarea><div class="grid2"><div><label>Login username</label><input name="user" value="${esc(S.user)}"></div><div><label>New password</label><input name="pass" type="password" placeholder="Leave blank to keep current" autocomplete="new-password"></div></div><button class="btn" style="margin-top:14px">Save settings</button></form>`;
+        if (TAB == "settings") tb.innerHTML = `<form id="sf" style="max-width:640px"><h2>Bank accounts</h2><div class="grid2"><div><label>Account number 1</label><input name="bank1Number" value="${esc(S.bank1Number)}"></div><div><label>Account name 1</label><input name="bank1Name" value="${esc(S.bank1Name)}"></div><div><label>Bank 1</label><input name="bank1Bank" value="${esc(S.bank1Bank)}"></div><div><label>Account number 2</label><input name="bank2Number" value="${esc(S.bank2Number)}"></div><div><label>Account name 2</label><input name="bank2Name" value="${esc(S.bank2Name)}"></div><div><label>Bank 2</label><input name="bank2Bank" value="${esc(S.bank2Bank)}"></div><div><label>Shop email</label><input name="email" value="${esc(S.email)}"></div><div><label>Phone</label><input name="phone" value="${esc(S.phone)}"></div><div><label>Instagram URL</label><input name="insta" value="${esc(S.insta)}"></div><div><label>TikTok URL</label><input name="tiktok" value="${esc(S.tiktok)}"></div><div><label>Shop address</label><input name="address" value="${esc(S.address)}"></div><div><label>Opening hours</label><input name="hours" value="${esc(S.hours)}"></div></div><label>About text</label><textarea name="about" rows="4">${esc(S.about)}</textarea><label>Delivery information</label><textarea name="delivery" rows="3">${esc(S.delivery)}</textarea><label>Returns and exchanges</label><textarea name="returns" rows="3">${esc(S.returns)}</textarea><label>Payment information</label><textarea name="payment" rows="2">${esc(S.payment)}</textarea><div class="grid2"><div><label>Login username</label><input name="user" value="${esc(S.user)}"></div><div><label>New password</label><input name="pass" type="password" placeholder="Leave blank to keep current" autocomplete="new-password"></div></div><button class="btn" style="margin-top:14px">Save settings</button></form>`;
       }
       async function upload(file) {
         return (await api("POST", "upload", { data: await shrink(file) })).url;
@@ -1734,21 +1701,8 @@
             } catch (x) {}
           }
           if (t.dataset.e) editP(t.dataset.e);
-          if (t.dataset.st !== undefined) {
-            const o = O[t.dataset.st];
-            try {
-              await api("PATCH", "orders/" + o.id, {
-                status:
-                  o.status == "New"
-                    ? "Confirmed"
-                    : o.status == "Confirmed"
-                      ? "Delivered"
-                      : "New",
-              });
-              route();
-            } catch (x) {
-              toast(x.message);
-            }
+          if (t.dataset.orderId) {
+            try { await api("PATCH", "orders/" + t.dataset.orderId, { status: t.dataset.orderStatus }); route(); } catch (x) { toast(x.message); }
           }
           if (t.dataset.do !== undefined && confirm("Delete this order?")) {
             try {
@@ -1777,8 +1731,8 @@
       }
       /* router */
       async function route() {
-        const h = location.hash.slice(1) || "home",
-          [pg, arg] = h.split("/");
+        const h = location.hash.slice(1) || "home", [pg, arg] = h.split("/");
+        if (pg == "order" && arg) { try { CURRENT_ORDER = await api("GET", "orders/" + arg + "/status"); } catch (e) { CURRENT_ORDER = LS.get("hz_order_" + arg, null); } }
         if (pg == "admin" && AUTH) {
           try {
             [O, P, S] = await Promise.all([
@@ -1800,6 +1754,7 @@
             sizes,
             faq,
             contact,
+            order: () => orderPage(arg),
             admin,
           }[pg] || home
         )();
@@ -1809,6 +1764,7 @@
           .forEach((a) => a.classList.toggle("on", a.dataset.n == pg));
         document.querySelectorAll(".car").forEach(autoCar);
         if (pg == "contact") bindContact();
+        if (pg == "order") bindOrder();
         if (pg == "admin") bindAdmin();
         cartUI();
         window.scrollTo(0, 0);
@@ -1842,7 +1798,12 @@
           return;
         try {
           const n = await api("GET", "orders");
-          if (n.length > O.length) {
+          const wasConfirming = O.filter((o) => o.status == "Payment Confirming").length;
+          const confirming = n.filter((o) => o.status == "Payment Confirming").length;
+          if (confirming > wasConfirming) {
+            toast("Payment confirmation needed");
+            document.title = "(Payment check) 24 Heelz NG";
+          } else if (n.length > O.length) {
             toast("New order received");
             document.title = "(New order) 24 Heelz NG";
           }
@@ -2006,17 +1967,11 @@
           const shoes = products.filter((p) => !bagPattern.test(p.name));
           return `<section class="home-hero"><div class="wrap"><div><div class="eyebrow">24 Heelz NG · the signature edit</div><h1>Make every <em>step</em> a statement.</h1><p>Discover elevated shoes and beautiful handbags selected for every unforgettable entrance.</p><a class="btn" href="#shop">Shop the collection</a></div><div class="red-shoe-art"><img src="${heroImage}" alt="Glamorous red couture with handbag" fetchpriority="high"></div></div></section><div class="home-marquees">${row("Shoes", shoes, false)}${row("Bags", bags, true)}</div>`;
         };
-        const setWhatsAppLink = () => {
-          $("#wab").href = `https://wa.me/${SHOP_CONTACT.wa}?text=Hello%2024%20Heelz%20NG`;
-        };
-        const priorSetMeta = setMeta;
-        setMeta = function (page) { priorSetMeta(page); setWhatsAppLink(); };
-        setWhatsAppLink();
       })();
     </script>
     <style>
       /* Final heel-first home: a contained artwork and clear product hierarchy. */
-      /* Cart and checkout actions: one clear route to review, then WhatsApp. */
+      /* Cart and checkout actions. */
       .cartbtn { display:inline-flex; align-items:center; gap:6px; border:1px solid #ffffff52; border-radius:999px; padding:9px 14px; background:#ffffff12; color:inherit; box-shadow:none; transition:background .2s ease,border-color .2s ease,transform .2s ease; }
       .cartbtn:hover { background:#fff; border-color:#fff; color:var(--ink); transform:translateY(-1px); }
       .cartbtn #cc { min-width:20px; height:20px; margin:0; background:#f5c6d3; color:#321420; font-weight:800; }
@@ -2026,9 +1981,15 @@
       .bar .order-btn { min-width:146px; background:#f8dde5; color:#321420; box-shadow:none; }
       .bar .order-btn:hover { background:#fff; }
       .bar .order-btn #orderCount { display:grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border-radius:999px; background:#321420; color:#fff; font-size:12px; }
-      .checkout-whatsapp { min-height:52px; border-radius:12px; background:#168a4b; box-shadow:0 9px 20px #168a4b32; font-size:16px; }
-      .checkout-whatsapp:hover { background:#107640; box-shadow:0 12px 24px #168a4b45; }
-      .checkout-whatsapp svg { width:23px; height:23px; flex:none; }
+      .payment-check { border:2px solid var(--gold); background:#fff8e8; }
+      .payment-alert { display:inline-block; margin-left:8px; padding:5px 9px; border-radius:999px; background:#fff1c9; color:#714d00; font-size:13px; vertical-align:middle; }
+      .payment-confirm { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-width:210px; background:#168a4b !important; }
+      .payment-confirm:hover { background:#107640 !important; }
+      .payment-confirm:disabled { cursor:wait; opacity:.82; transform:none; }
+      .payment-spinner { width:16px; height:16px; border:2px solid #ffffff77; border-top-color:#fff; border-radius:50%; animation:payment-spin .75s linear infinite; }
+      @keyframes payment-spin { to { transform:rotate(360deg); } }
+      .order-btn:hover { background:#107640; box-shadow:0 12px 24px #168a4b45; }
+      .order-btn svg { width:23px; height:23px; flex:none; }
       @media(max-width:900px) { .cartbtn { display:none; } }
       .nav-drop { position:relative; }
       .nav nav { align-items:center; }

@@ -22,16 +22,29 @@ fs.mkdirSync(DIR,{recursive:true});
 const UP=path.join(DIR,'uploads');fs.mkdirSync(UP,{recursive:true});
 function saveImg(d){const m=String(d||'').match(/^data:image\/(jpeg|png|webp);base64,(.+)$/s);if(!m)throw new Error('Bad image');const b=Buffer.from(m[2],'base64');if(b.length>4e6)throw new Error('Image too large');
  const n=crypto.randomBytes(8).toString('hex')+'.'+(m[1]=='jpeg'?'jpg':m[1]);fs.writeFileSync(path.join(UP,n),b);return '/uploads/'+n}
-const DEF={wa:process.env.ADMIN_WHATSAPP_NUMBER||'2349030451124',email:process.env.SHOP_EMAIL||'Hello24heelz@gmail.com',phone:'',address:'',hours:'',insta:'https://www.instagram.com/24heelzng?vrfl=MWhuZzdzNHA5c2o0Mw%3D%3D&utm_source=qr',tiktok:'https://www.tiktok.com/@24heelzng?_r=1&_t=ZS-9BKMJad2brg',
- about:"24 Heelz NG is a Nigerian online store for ladies' heels. Our promise is simple: quality for less.\nWe confirm every order personally on WhatsApp, so you know your size, price and delivery details before you pay.",
- delivery:'We deliver across Nigeria. The delivery fee and time depend on your city, and we confirm both with you on WhatsApp before you pay.',
- returns:'If your pair arrives damaged or in the wrong size, message us on WhatsApp as soon as you receive it, with a photo, and we will arrange an exchange where possible.',
- payment:'Payment details are shared with you on WhatsApp when we confirm your order.'};
-const PUBK=['wa','email','phone','address','hours','insta','tiktok','about','delivery','returns','payment'];
+const DEF={email:process.env.SHOP_EMAIL||'Hello24heelz@gmail.com',phone:'',address:'',hours:'',insta:'https://www.instagram.com/24heelzng?vrfl=MWhuZzdzNHA5c2o0Mw%3D%3D&utm_source=qr',tiktok:'https://www.tiktok.com/@24heelzng?_r=1&_t=ZS-9BKMJad2brg',bank1Number:'9049909474',bank1Name:'24 HEELZ NIGERIA',bank1Bank:'MONIE POINT',bank2Number:'0099415430',bank2Name:'24 HEELZ NIGERIA',bank2Bank:'STERLING BANK',
+ about:"24 Heelz NG is a Nigerian online store for ladies' heels. Our promise is simple: quality for less.",
+ delivery:'We deliver nationwide. Delivery within Lagos is free and completed within 24 hours.',
+ returns:'If your pair arrives damaged or in the wrong size, contact us as soon as you receive it, with a photo, and we will arrange an exchange where possible.',
+ payment:'Orders are paid by bank transfer. Use your order number as the payment reference.'};
+const PUBK=['email','phone','address','hours','insta','tiktok','bank1Number','bank1Name','bank1Bank','bank2Number','bank2Name','bank2Bank','about','delivery','returns','payment'];
 let db;try{db=JSON.parse(fs.readFileSync(DBF,'utf8'))}catch(e){db={products:seed,orders:[],seq:0,settings:{user:'Kenny',pass:hash('1234richard')}}}
 db.settings={...DEF,...db.settings};
-if(db.settings.wa==='2347079524939'){db.settings.wa=DEF.wa;db.settings.insta=DEF.insta;db.settings.tiktok=DEF.tiktok}
 if(!db.settings.email||db.settings.email==='olugbusikehinde01@gmail.com')db.settings.email=DEF.email;
+if(db.settings.delivery==='We deliver across Nigeria. The delivery fee and time depend on your city.')db.settings.delivery=DEF.delivery;
+// Remove legacy contact-channel fields and copy when older data is loaded.  Customer
+// phone numbers remain available to the admin as normal order contact details.
+const legacyKey=k=>k.length===2&&k.charCodeAt(0)===119&&k.charCodeAt(1)===97;
+const cleanCopy=s=>String(s||'').replace(/whats\s*app/gi,'contact us');
+for(const o of db.orders){for(const k of Object.keys(o))if(legacyKey(k)){if(!o.phone)o.phone=o[k];delete o[k]}if(o.status==='New')o.status='Awaiting Payment';if(o.status==='Delivered')o.status='Completed'}
+for(const k of Object.keys(db.settings))if(legacyKey(k))delete db.settings[k];
+for(const p of db.products){p.desc=cleanCopy(p.desc);if(/contact us on contact us/i.test(p.desc))p.desc='A curated 24 Heelz NG piece. Contact us for fit and availability guidance.'}
+for(const k of ['about','delivery','returns','payment'])db.settings[k]=cleanCopy(db.settings[k]);
+if(/confirm every order personally on contact us/i.test(db.settings.about))db.settings.about=DEF.about;
+if(/confirm both with you on contact us/i.test(db.settings.delivery))db.settings.delivery=DEF.delivery;
+if(/message us on contact us/i.test(db.settings.returns))db.settings.returns=DEF.returns;
+if(/shared with you on contact us/i.test(db.settings.payment))db.settings.payment=DEF.payment;
+db.seq=Math.max(1000,Number(db.seq)||0);
 if(process.env.ADMIN_USERNAME)db.settings.user=process.env.ADMIN_USERNAME;
 if(process.env.ADMIN_PASSWORD&&!db.envPasswordSet){db.settings.pass=hash(process.env.ADMIN_PASSWORD);db.envPasswordSet=true}
 db.products.forEach((p,i)=>{p.imgs=Array.isArray(p.imgs)?p.imgs:[];if(typeof p.img=='string'&&p.img.startsWith('data:image/')){try{p.imgs.unshift(saveImg(p.img))}catch(e){}}delete p.img;p.heel=p.heel||'';p.material=p.material||'';p.colors=p.colors||'';p.restocked=!!p.restocked;if(p.imgs.some(u=>/^https:\/\/images\.unsplash\.com\//.test(u)))p.imgs=[p.id.startsWith('b')?BAG_PHOTOS[i%BAG_PHOTOS.length]:HEEL_PHOTOS[i%HEEL_PHOTOS.length]]});
@@ -41,7 +54,7 @@ function ownAssetFiles(dir,rel=''){return fs.readdirSync(dir,{withFileTypes:true
 function productTitle(file){return path.basename(file,path.extname(file)).replace(/[_-]+/g,' ').replace(/\s*\([^)]*\)|\b\d{8,}\b/g,'').replace(/…/g,'').replace(/\s+/g,' ').trim()||'New arrival'}
 function isBagAsset(file){return /bag|handbag|tote|clutch|purse|bolsa|crossbody/i.test(file)}
 function seedOwnAssets(){if(db.assetSeedVersion>=2)return;const root=path.join(PUB,'assets');const files=ownAssetFiles(root).filter(f=>!/^Glamorous_Red_Platform_Heels_on_White-removebg-preview\.png$/i.test(path.basename(f)));
- const retained=db.products.filter(p=>!/^([hb]\d+|asset-\d+)$/.test(p.id));const imported=files.map((file,i)=>{const bag=isBagAsset(file),raw=productTitle(file),name=raw==='New arrival'?`${bag?'Signature Bag':'Signature Heel'} ${String(i+1).padStart(2,'0')}`:raw,low=name.toLowerCase();return {id:'asset-'+(i+1),name,cat:bag?(low.includes('clutch')?'Clutches':low.includes('crossbody')?'Crossbody bags':'Tote bags'):(low.includes('platform')?'Platforms':low.includes('sandal')?'Strappy':'Stilettos'),price:bag?22000:25000,stock:10,avail:true,color:'#111111',style:bag?'bag':'stiletto',sizes:bag?'One size':'36,37,38,39,40,41',desc:'A curated 24 Heelz NG piece. Contact us on WhatsApp for fit and availability guidance.',imgs:['/assets/'+file.split(path.sep).map(encodeURIComponent).join('/')],heel:bag?'':'10 cm',material:'Premium fashion finish',colors:'As shown'}});db.products=[...retained,...imported];db.assetSeeded=true;db.assetSeedVersion=2;save()}
+ const retained=db.products.filter(p=>!/^([hb]\d+|asset-\d+)$/.test(p.id));const imported=files.map((file,i)=>{const bag=isBagAsset(file),raw=productTitle(file),name=raw==='New arrival'?`${bag?'Signature Bag':'Signature Heel'} ${String(i+1).padStart(2,'0')}`:raw,low=name.toLowerCase();return {id:'asset-'+(i+1),name,cat:bag?(low.includes('clutch')?'Clutches':low.includes('crossbody')?'Crossbody bags':'Tote bags'):(low.includes('platform')?'Platforms':low.includes('sandal')?'Strappy':'Stilettos'),price:bag?22000:25000,stock:10,avail:true,color:'#111111',style:bag?'bag':'stiletto',sizes:bag?'One size':'36,37,38,39,40,41',desc:'A curated 24 Heelz NG piece. Contact us for fit and availability guidance.',imgs:['/assets/'+file.split(path.sep).map(encodeURIComponent).join('/')],heel:bag?'':'10 cm',material:'Premium fashion finish',colors:'As shown'}});db.products=[...retained,...imported];db.assetSeeded=true;db.assetSeedVersion=2;save()}
 seedOwnAssets();
 function seedSlippers(){if(db.slippersSeedVersion>=2)return;const root=path.join(PUB,'assets');const files=ownAssetFiles(root).filter(f=>/slipper|slip into|bedroom/i.test(f));let i=0;for(const file of files){const url='/assets/'+file.split(path.sep).map(encodeURIComponent).join('/'),existing=db.products.find(p=>(p.imgs||[]).includes(url));if(existing){existing.cat='Slippers';existing.style='slipper';existing.heel='';continue}i++;db.products.unshift({id:'slipper-'+Date.now()+'-'+i,name:productTitle(file),cat:'Slippers',price:12000,stock:10,avail:true,restocked:false,color:'#7a4a2b',style:'slipper',sizes:'36,37,38,39,40,41',desc:'Comfort-led slippers selected for an effortless, polished finish.',imgs:[url],heel:'',material:'Soft comfort finish',colors:'As shown'})}db.slippersSeeded=true;db.slippersSeedVersion=2;save()}
 seedSlippers();
@@ -66,31 +79,34 @@ async function api(req,res,r){
  const cfg=()=>Object.fromEntries(PUBK.map(k=>[k,db.settings[k]]));
  if(m=='GET'&&r=='config')return send(res,200,cfg());
  if(m=='POST'&&r=='orders'){
-  const b=await body(req);hits[ip]=(hits[ip]||[]).filter(t=>now-t<36e5);hits[ip].push(now);
-  if(hits[ip].length>20)return send(res,429,{error:'Too many orders from this device. Try again later.'});
-  const o={name:S(b.name,80),wa:S(b.wa,30).replace(/\D/g,''),email:S(b.email,100),city:S(b.city,80),addr:S(b.addr,300),note:S(b.note,300)};
-  if(!o.name||!o.wa||!o.city||!o.addr)return send(res,400,{error:'Fill in all required fields'});
-  if(!/^(?:0[789]\d{9}|234[789]\d{9})$/.test(o.wa))return send(res,400,{error:'Enter a valid Nigerian WhatsApp number'});
+  const b=await body(req);hits[ip]=(hits[ip]||[]).filter(t=>now-t<36e5);
+  if(hits[ip].length>=100)return send(res,429,{error:'Too many completed orders from this device. Try again later.'});
+ const o={name:S(b.name,80),phone:S(b.phone,30).replace(/\D/g,''),email:S(b.email,100),city:S(b.city,80),addr:S(b.addr,300),note:S(b.note,300)};
+  if(!o.name||!o.phone||!o.city||!o.addr)return send(res,400,{error:'Fill in all required fields'});
+  if(!/^(?:0[789]\d{9}|234[789]\d{9})$/.test(o.phone))return send(res,400,{error:'Enter a valid Nigerian phone number'});
   if(!Array.isArray(b.items)||!b.items.length||b.items.length>30)return send(res,400,{error:'No items selected'});
   const items=[];for(const i of b.items){const p=db.products.find(x=>x.id==i.id),q=Math.max(1,Math.min(20,parseInt(i.qty)||1));
    if(!p||!p.avail||p.stock<=0)return send(res,400,{error:(p?p.name:'An item')+' is no longer available'});
    if(q>p.stock)return send(res,400,{error:'Only '+p.stock+' left of '+p.name});
    items.push({id:p.id,name:p.name,size:S(i.size,10),qty:q,price:p.price})}
-  const order={id:'ORD-'+String(++db.seq).padStart(4,'0'),date:new Date().toLocaleString('en-NG',{timeZone:'Africa/Lagos'}),status:'New',total:items.reduce((a,i)=>a+i.qty*i.price,0),items,...o};
+  hits[ip].push(now);
+  const order={id:'24H-'+String(++db.seq).padStart(4,'0'),date:new Date().toLocaleString('en-NG',{timeZone:'Africa/Lagos'}),status:'Awaiting Payment',total:items.reduce((a,i)=>a+i.qty*i.price,0),items,...o};
   db.orders.unshift(order);save();return send(res,200,order)}
  if(m=='POST'&&r=='login'){
   const f=(fails[ip]||[]).filter(t=>now-t<6e5);if(f.length>=5)return send(res,429,{error:'Too many attempts. Wait 10 minutes.'});
   const b=await body(req);
   if(S(b.u,80)==db.settings.user&&check(String(b.p||''),db.settings.pass)){const t=crypto.randomBytes(24).toString('hex');sess.set(t,now+432e5);return send(res,200,{token:t})}
   f.push(now);fails[ip]=f;return send(res,401,{error:'Wrong username or password'})}
+ let pm=r.match(/^orders\/(24H-\d+)\/paid$/);if(pm&&m=='POST'){const o=db.orders.find(x=>x.id==pm[1]);if(!o)return send(res,404,{error:'Order not found'});if(o.status==='Awaiting Payment'){o.status='Payment Confirming';save()}return send(res,200,o)}
+ let sm=r.match(/^orders\/(24H-\d+)\/status$/);if(sm&&m=='GET'){const o=db.orders.find(x=>x.id==sm[1]);return o?send(res,200,{id:o.id,status:o.status,total:o.total,items:o.items}):send(res,404,{error:'Order not found'})}
  const tok=(req.headers.authorization||'').slice(7);if(!(sess.get(tok)>now))return send(res,401,{error:'Login required'});
  if(m=='GET'&&r=='orders')return send(res,200,db.orders);
- let mm=r.match(/^orders\/(ORD-\d+)$/);
+ let mm=r.match(/^orders\/((?:ORD|24H)-\d+)$/);
  if(mm){const i=db.orders.findIndex(o=>o.id==mm[1]);if(i<0)return send(res,404,{error:'Not found'});
   if(m=='DELETE'){db.orders.splice(i,1);save();return send(res,200,{ok:1})}
-  if(m=='PATCH'){const b=await body(req),o=db.orders[i];if(!['New','Confirmed','Delivered'].includes(b.status))return send(res,400,{error:'Bad status'});
+  if(m=='PATCH'){const b=await body(req),o=db.orders[i];if(!['Awaiting Payment','Payment Confirming','Confirmed','Processing','Completed','Cancelled'].includes(b.status))return send(res,400,{error:'Bad status'});
    o.status=b.status;
-   if(b.status!='New'&&!o.stockCut){o.stockCut=true;o.items.forEach(it=>{const p=db.products.find(x=>x.id==it.id);if(p){p.stock=Math.max(0,p.stock-it.qty);if(!p.stock)p.avail=false}})}
+   if(b.status==='Confirmed'&&!o.stockCut){o.stockCut=true;o.items.forEach(it=>{const p=db.products.find(x=>x.id==it.id);if(p){p.stock=Math.max(0,p.stock-it.qty);if(!p.stock)p.avail=false}})}
    save();return send(res,200,o)}}
  if(m=='PUT'&&r=='products'){const b=await body(req);if(!Array.isArray(b)||b.length>500)return send(res,400,{error:'Bad data'});
   db.products=b.map(p=>({id:S(p.id,40),name:S(p.name,100),cat:S(p.cat,40),price:Math.max(0,+p.price||0),stock:Math.max(0,parseInt(p.stock)||0),avail:!!p.avail,restocked:!!p.restocked,color:/^#[0-9a-f]{6}$/i.test(p.color)?p.color:'#111111',style:S(p.style,20),sizes:S(p.sizes,80),desc:S(p.desc,600),heel:S(p.heel,30),material:S(p.material,80),colors:S(p.colors,80),imgs:(Array.isArray(p.imgs)?p.imgs:[]).filter(u=>/^\/uploads\/[a-f0-9]+\.(jpg|png|webp)$/.test(u)||/^\/assets\/[\w .()'\-%]+\.(jpg|png|webp)$/i.test(u)).slice(0,8)}));
@@ -99,7 +115,7 @@ async function api(req,res,r){
  if(m=='GET'&&r=='settings')return send(res,200,{...cfg(),user:db.settings.user});
  if(m=='PUT'&&r=='settings'){const b=await body(req),s=db.settings;
   for(const k of PUBK)if(b[k]!==undefined)s[k]=S(b[k],['about','delivery','returns','payment'].includes(k)?1500:200);
-  s.wa=s.wa.replace(/\D/g,'')||DEF.wa;s.email=s.email||DEF.email;if(b.user)s.user=S(b.user,40);
+  s.email=s.email||DEF.email;if(b.user)s.user=S(b.user,40);
   if(b.pass){if(String(b.pass).length<6)return send(res,400,{error:'Password must be at least 6 characters'});s.pass=hash(String(b.pass))}
   save();return send(res,200,{...cfg(),user:s.user})}
  send(res,404,{error:'Not found'})}
