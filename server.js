@@ -27,9 +27,37 @@ const DEF={email:process.env.SHOP_EMAIL||'Hello24heelz@gmail.com',phone:'',addre
  delivery:'We deliver nationwide. Delivery within Lagos is free and completed within 24 hours.',
  returns:'If your pair arrives damaged or in the wrong size, contact us as soon as you receive it, with a photo, and we will arrange an exchange where possible.',
  payment:'Orders are paid by bank transfer. Use your order number as the payment reference.'};
+// Full Lagos LGA dispatch catalogue. Prices are higher starting estimates from Obalende;
+// each area remains an ordinary dashboard record that the owner can change at any time.
+const LAGOS_DELIVERY_GROUPS=[
+ ['Agege','Mainland west',[['Agege',8500],['Dopemu',9000],['Orile Agege',9500],['Oke Koto',9000]],['Agege Pen Cinema','Dopemu','Oke Koto','Iyana Ipaja','Abule Egba']],
+ ['Ajeromi-Ifelodun','Port & west',[['Ajegunle',10000],['Tolu',10000],['Amukoko',10500],['Fagba',11000]],['Boundary','Tolu','Coconut','Babalola','Amukoko']],
+ ['Alimosho','Mainland west',[['Egbeda',10000],['Ipaja',10500],['Ikotun',11000],['Akowonjo',10000],['Idimu',11000],['Gowon Estate',11000]],['Egbeda','Ipaja','Ikotun','Akowonjo','Idimu','Council']],
+ ['Amuwo-Odofin','Port & west',[['Amuwo Odofin',10500],['Festac Town',10000],['Satellite Town',11000],['Trade Fair',11500]],['Festac First Gate','Apple Junction','Alakija','Trade Fair','Satellite Town']],
+ ['Apapa','Port & west',[['Apapa',9500],['Kirikiri',10500],['Ijora',9500],['Tincan',11000]],['Apapa Under Bridge','Liverpool','Kirikiri','Tincan','Ijora']],
+ ['Badagry','Far west',[['Badagry',18000],['Ajara',17500],['Oko-Afo',16000],['Ibereko',18000]],['Badagry Roundabout','Ajara','Oko Afo','Ibereko','Topo']],
+ ['Epe','Far east',[['Epe',18000],['Epe T Junction',17500],['Ibeju Epe',18500],['Poka',18000]],['Epe T Junction','Epe Garage','Poka','Itoikin','Epe Resort']],
+ ['Eti-Osa','Island & Lekki',[['Victoria Island',6500],['Ikoyi',6000],['Lekki Phase 1',7500],['Oniru',6500],['Lekki Phase 2',8500],['Ajah',9500],['Chevron',8500],['Sangotedo',10500]],['Obalende','Law School','Oniru','Lekki First Gate','Jakande','Chevron','Ajah','Sangotedo']],
+ ['Ibeju-Lekki','Far east',[['Abraham Adesanya',11000],['Awoyaya',12000],['Lakowe',13000],['Bogije',13500],['Ibeju-Lekki',16000]],['Abraham Adesanya','Awoyaya','Mayfair Gardens','Lakowe','Bogije','Eleko Junction']],
+ ['Ifako-Ijaiye','Mainland west',[['Ifako',9000],['Ijaiye',9000],['Ojokoro',9500],['Fagba',9500]],['Iju Ishaga','Ifako','College Road','Fagba','Ojokoro']],
+ ['Ikeja','Mainland central',[['Ikeja',7500],['Ikeja GRA',8000],['Maryland',7500],['Oregun',7500],['Alausa',7500]],['Alausa','Computer Village','Maryland','Opebi','Ikeja Along','Secretariat']],
+ ['Ikorodu','Far north',[['Ikorodu',14000],['Igbogbo',15000],['Imota',16000],['Ijede',15000],['Agric',14000]],['Ikorodu Garage','Igbẹgbọn','Benson','Agric','Ijede','Imota']],
+ ['Kosofe','Mainland north',[['Ketu',9500],['Mile 12',9500],['Ojota',9000],['Magodo',10000],['Isheri',10500]],['Ketu','Mile 12','Ojota','Magodo Gate','Berger','Isheri']],
+ ['Lagos Island','Island',[['Obalende',5500],['Marina',6000],['Idumota',6500],['Onikan',6000],['Broad Street',6000]],['Obalende','CMS','Marina','Idumota','Tafawa Balewa Square','Onikan']],
+ ['Lagos Mainland','Mainland central',[['Yaba',7500],['Ebute Metta',8000],['Oyingbo',7500],['Sabo',8000],['Akoka',8500]],['Yaba','Sabo','Oyingbo','Jibowu','Adekunle','University Road']],
+ ['Mushin','Mainland central',[['Mushin',9000],['Ojuelegba',8500],['Palmgrove',8500],['Idi Araba',9500]],['Mushin','Ojuelegba','Palmgrove','Idi Araba','Arena']],
+ ['Ojo','Port & west',[['Ojo',12000],['Iyana Iba',12000],['Okokomaiko',12500],['Alaba',12000]],['Ojo Barracks','Iyana Iba','Alaba International','Okokomaiko','Volkswagen']],
+ ['Oshodi-Isolo','Mainland central',[['Oshodi',8500],['Isolo',9500],['Ejigbo',10000],['Mafoluku',9000],['Ajao Estate',8500]],['Oshodi','Mafoluku','Isolo','Ejigbo','Ajao Estate','Airport Road']],
+ ['Shomolu','Mainland central',[['Shomolu',8500],['Bariga',9000],['Pedro',8500],['Fadeyi',8000]],['Shomolu','Pedro','Bariga','Fadeyi','Onipanu']],
+ ['Surulere','Mainland central',[['Surulere',8000],['Aguda',8500],['Bode Thomas',8000],['Itire',9000],['Lawanson',8500]],['Ojuelegba','Stadium','Bode Thomas','Lawanson','Itire','Barracks']]
+];
+const DELIVERY_DEFAULTS=LAGOS_DELIVERY_GROUPS.flatMap(([lga,zone,areas,busStops],groupIndex)=>areas.map(([name,price],areaIndex)=>({id:'lag-'+groupIndex+'-'+areaIndex,name,lga,zone,price:Math.round(price/2/250)*250,enabled:true,sort:groupIndex*100+areaIndex,busStops})));
+const STANDARD_UNPRICED_DELIVERY_FEE=5000;
 const PUBK=['email','phone','address','hours','insta','tiktok','bank1Number','bank1Name','bank1Bank','bank2Number','bank2Name','bank2Bank','about','delivery','returns','payment'];
 let db;try{db=JSON.parse(fs.readFileSync(DBF,'utf8'))}catch(e){db={products:seed,orders:[],seq:0,settings:{user:'Kenny',pass:hash('1234richard')}}}
 db.settings={...DEF,...db.settings};
+if(!Array.isArray(db.deliveryAreas)||!db.deliveryAreas.length||Number(db.deliverySeedVersion||0)<2){db.deliveryAreas=DELIVERY_DEFAULTS;db.deliverySeedVersion=2;db.deliveryPriceVersion=1}
+if(Number(db.deliveryPriceVersion||0)<1){db.deliveryAreas.forEach(a=>a.price=Math.round(Math.max(0,Number(a.price)||0)/2/250)*250);db.deliveryPriceVersion=1}
 if(!db.settings.email||db.settings.email==='olugbusikehinde01@gmail.com')db.settings.email=DEF.email;
 if(db.settings.delivery==='We deliver across Nigeria. The delivery fee and time depend on your city.')db.settings.delivery=DEF.delivery;
 // Remove legacy contact-channel fields and copy when older data is loaded.  Customer
@@ -37,6 +65,7 @@ if(db.settings.delivery==='We deliver across Nigeria. The delivery fee and time 
 const legacyKey=k=>k.length===2&&k.charCodeAt(0)===119&&k.charCodeAt(1)===97;
 const cleanCopy=s=>String(s||'').replace(/whats\s*app/gi,'contact us');
 for(const o of db.orders){for(const k of Object.keys(o))if(legacyKey(k)){if(!o.phone)o.phone=o[k];delete o[k]}if(o.status==='New')o.status='Awaiting Payment';if(o.status==='Delivered')o.status='Completed'}
+if(Number(db.deliveryOrderFeeVersion||0)<1){for(const o of db.orders)if(o.needsDeliveryArrangement&&(o.deliveryFee==null||o.total==null)){o.deliveryFee=STANDARD_UNPRICED_DELIVERY_FEE;o.total=(Number(o.subtotal)||o.items.reduce((sum,item)=>sum+item.qty*item.price,0))+o.deliveryFee}db.deliveryOrderFeeVersion=1}
 for(const k of Object.keys(db.settings))if(legacyKey(k))delete db.settings[k];
 for(const p of db.products){p.desc=cleanCopy(p.desc);if(/contact us on contact us/i.test(p.desc))p.desc='A curated 24 Heelz NG piece. Contact us for fit and availability guidance.'}
 for(const k of ['about','delivery','returns','payment'])db.settings[k]=cleanCopy(db.settings[k]);
@@ -80,21 +109,31 @@ const S=(v,n)=>String(v==null?'':v).trim().slice(0,n);
 async function api(req,res,r){
  const m=req.method,ip=req.socket.remoteAddress,now=Date.now();
  if(m=='GET'&&r=='products')return send(res,200,db.products);
+ if(m=='GET'&&r=='delivery-areas')return send(res,200,db.deliveryAreas.filter(a=>a.enabled).sort((a,b)=>a.sort-b.sort||a.name.localeCompare(b.name)));
  const cfg=()=>Object.fromEntries(PUBK.map(k=>[k,db.settings[k]]));
  if(m=='GET'&&r=='config')return send(res,200,cfg());
  if(m=='POST'&&r=='orders'){
   const b=await body(req);hits[ip]=(hits[ip]||[]).filter(t=>now-t<36e5);
   if(hits[ip].length>=100)return send(res,429,{error:'Too many completed orders from this device. Try again later.'});
- const o={name:S(b.name,80),phone:S(b.phone,30).replace(/\D/g,''),email:S(b.email,100),city:S(b.city,80),addr:S(b.addr,300),note:S(b.note,300)};
-  if(!o.name||!o.phone||!o.city||!o.addr)return send(res,400,{error:'Fill in all required fields'});
+ const o={name:S(b.name,80),phone:S(b.phone,30).replace(/\D/g,''),email:S(b.email,100),state:S(b.state,60),city:S(b.city,80),addr:S(b.addr,500),note:S(b.note,300),landmark:S(b.landmark,200),street:S(b.street,200),estate:S(b.estate,200),deliveryAreaId:S(b.deliveryAreaId,80)};
+  if(!o.name||!o.phone||!o.email||!o.state)return send(res,400,{error:'Fill in all required contact and delivery fields'});
+  if(!/^\S+@\S+\.\S+$/.test(o.email))return send(res,400,{error:'Enter a valid email address'});
   if(!/^(?:0[789]\d{9}|234[789]\d{9})$/.test(o.phone))return send(res,400,{error:'Enter a valid Nigerian phone number'});
   if(!Array.isArray(b.items)||!b.items.length||b.items.length>30)return send(res,400,{error:'No items selected'});
   const items=[];for(const i of b.items){const p=db.products.find(x=>x.id==i.id),q=Math.max(1,Math.min(20,parseInt(i.qty)||1));
    if(!p||!p.avail||p.stock<=0)return send(res,400,{error:(p?p.name:'An item')+' is no longer available'});
    if(q>p.stock)return send(res,400,{error:'Only '+p.stock+' left of '+p.name});
    items.push({id:p.id,name:p.name,size:S(i.size,10),qty:q,price:p.price})}
+  const subtotal=items.reduce((a,i)=>a+i.qty*i.price,0);let deliveryFee=null,needsDeliveryArrangement=o.state!=='Lagos',deliveryArea=null;
+  if(o.state==='Lagos'){
+   deliveryArea=o.deliveryAreaId==='lag-other'?{id:'lag-other',name:'Other Lagos area (not listed)',lga:o.city||'Other Lagos area'}:db.deliveryAreas.find(a=>a.id===o.deliveryAreaId&&a.enabled);
+   if(!deliveryArea||!o.city||!o.landmark||!o.street)return send(res,400,{error:'Complete your Lagos delivery address and select an area'});
+   if(deliveryArea.id==='lag-other'){needsDeliveryArrangement=true;deliveryFee=STANDARD_UNPRICED_DELIVERY_FEE}else deliveryFee=Math.max(0,Number(deliveryArea.price)||0);
+   o.city=deliveryArea.lga;o.addr=S(b.addr,500)||deliveryArea.name;
+  }else if(!o.addr||!o.landmark)return send(res,400,{error:'Enter your full delivery address and nearest landmark'});
+  if(deliveryFee==null)deliveryFee=STANDARD_UNPRICED_DELIVERY_FEE;
   hits[ip].push(now);
-  const order={id:'24H-'+String(++db.seq).padStart(4,'0'),date:new Date().toLocaleString('en-NG',{timeZone:'Africa/Lagos'}),status:'Awaiting Payment',total:items.reduce((a,i)=>a+i.qty*i.price,0),items,...o};
+  const order={id:'24H-'+String(++db.seq).padStart(4,'0'),date:new Date().toLocaleString('en-NG',{timeZone:'Africa/Lagos'}),status:'Awaiting Payment',subtotal,deliveryFee,total:subtotal+deliveryFee,needsDeliveryArrangement,deliveryArea:deliveryArea?deliveryArea.name:'',items,...o};
   db.orders.unshift(order);save();return send(res,200,order)}
  if(m=='POST'&&r=='login'){
   const f=(fails[ip]||[]).filter(t=>now-t<6e5);if(f.length>=5)return send(res,429,{error:'Too many attempts. Wait 10 minutes.'});
@@ -103,9 +142,11 @@ async function api(req,res,r){
   if((u==db.settings.user&&check(p,db.settings.pass))||(u==db.settings.ceoUser&&check(p,db.settings.ceoPass))){const t=crypto.randomBytes(24).toString('hex');sess.set(t,now+432e5);return send(res,200,{token:t})}
   f.push(now);fails[ip]=f;return send(res,401,{error:'Wrong username or password'})}
  let pm=r.match(/^orders\/(24H-\d+)\/paid$/);if(pm&&m=='POST'){const o=db.orders.find(x=>x.id==pm[1]);if(!o)return send(res,404,{error:'Order not found'});if(o.status==='Awaiting Payment'){o.status='Payment Confirming';save()}return send(res,200,o)}
- let sm=r.match(/^orders\/(24H-\d+)\/status$/);if(sm&&m=='GET'){const o=db.orders.find(x=>x.id==sm[1]);return o?send(res,200,{id:o.id,status:o.status,total:o.total,items:o.items}):send(res,404,{error:'Order not found'})}
+ let sm=r.match(/^orders\/(24H-\d+)\/status$/);if(sm&&m=='GET'){const o=db.orders.find(x=>x.id==sm[1]);return o?send(res,200,{id:o.id,status:o.status,total:o.total,subtotal:o.subtotal,deliveryFee:o.deliveryFee,needsDeliveryArrangement:o.needsDeliveryArrangement,deliveryArea:o.deliveryArea,items:o.items}):send(res,404,{error:'Order not found'})}
  const tok=(req.headers.authorization||'').slice(7);if(!(sess.get(tok)>now))return send(res,401,{error:'Login required'});
  if(m=='GET'&&r=='orders')return send(res,200,db.orders);
+ if(m=='GET'&&r=='delivery-areas')return send(res,200,db.deliveryAreas);
+ if(m=='PUT'&&r=='delivery-areas'){const b=await body(req);if(!Array.isArray(b)||b.length>300)return send(res,400,{error:'Bad delivery areas'});db.deliveryAreas=b.map((a,i)=>({id:S(a.id,80)||'lag-'+Date.now()+'-'+i,name:S(a.name,100),lga:S(a.lga,80),zone:S(a.zone,40),price:Math.max(0,Number(a.price)||0),enabled:!!a.enabled,sort:Math.max(0,parseInt(a.sort)||i),busStops:(Array.isArray(a.busStops)?a.busStops:[]).map(x=>S(x,80)).filter(Boolean).slice(0,60)})).filter(a=>a.name&&a.lga);save();return send(res,200,db.deliveryAreas)}
  let mm=r.match(/^orders\/((?:ORD|24H)-\d+)$/);
  if(mm){const i=db.orders.findIndex(o=>o.id==mm[1]);if(i<0)return send(res,404,{error:'Not found'});
   if(m=='DELETE'){db.orders.splice(i,1);save();return send(res,200,{ok:1})}

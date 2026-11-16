@@ -463,6 +463,11 @@
         padding: 14px;
         margin-bottom: 12px;
       }
+      .checkout-totals { display:grid; grid-template-columns:1fr auto; gap:9px 18px; margin:18px 0; padding:16px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+      .checkout-totals strong { padding-top:9px; border-top:1px solid var(--line); }
+      .delivery-message { margin:14px 0; padding:12px 14px; border-left:3px solid var(--wine); background:var(--soft); }
+      .delivery-admin-row { display:grid; grid-template-columns:minmax(170px,1fr) auto auto auto auto auto; align-items:center; gap:8px; padding:10px 0; border-top:1px solid var(--line); }
+      .delivery-admin-row small { display:block; color:var(--mute); margin-top:3px; }
       .pill {
         font-size: 12px;
         font-weight: 700;
@@ -488,6 +493,8 @@
         .grid2 {
           grid-template-columns: 1fr;
         }
+        .delivery-admin-row { grid-template-columns:1fr auto auto; }
+        .delivery-admin-row span:first-child { grid-column:1 / -1; }
         .perks,
         .quotes {
           grid-template-columns: 1fr 1fr;
@@ -945,6 +952,7 @@
       ];
       let P = [],
         O = [],
+        D = [],
         S = { email: "" },
         CART = LS.get("hz_cart", []),
         TOKEN = sessionStorage.getItem("hz_tok") || "";
@@ -976,6 +984,9 @@
             toast(e.message);
             throw e;
           });
+      const STATES = ["Lagos","Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT Abuja","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"];
+      const STANDARD_UNPRICED_DELIVERY_FEE = 5000;
+      const subtotal = () => CART.reduce((a,c) => a + c.qty * (P.find(p => p.id == c.id)?.price || 0), 0);
       function heel(p, w) {
         const c = p.color || "#111",
           st = p.style || "stiletto";
@@ -1289,7 +1300,7 @@
           [BAG_CATS.includes(p.cat) ? "Size" : "Sizes (EU)", p.sizes],
         ].filter((x) => x[1]);
         $("#modal").innerHTML =
-          `<button class="x" aria-label="Close">×</button><div class="pd"><div><div class="im" id="mainIm">${img(p)}</div>${im.length > 1 ? `<div class="thumbs">${im.map((u, i) => `<button data-th="${i}" class="${i ? "" : "on"}" aria-label="Photo ${i + 1}"><img src="${u}" alt=""></button>`).join("")}</div>` : ""}</div><div><h2>${esc(p.name)}</h2><p class="price" style="font-size:26px;margin:8px 0">${N(p.price)}</p><p class="st ${s == "out" ? "no" : "ok"}">${s == "out" ? "Not available" : s == "low" ? `Available — only ${p.stock} left` : `Available — ${p.stock} in stock`}</p><p style="margin:12px 0">${esc(p.desc)}</p><dl class="det">${det.map((d) => `<dt>${d[0]}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl><b>Size</b><div class="sizes">${sz.map((z, i) => `<button class="${i ? "" : "on"}" data-sz="${esc(z)}">${esc(z)}</button>`).join("")}</div><button class="btn" id="addB" ${s == "out" ? "disabled" : ""}>${s == "out" ? "Out of stock" : "Select this pair"}</button><p class="mut" style="margin-top:12px">Delivery fee is confirmed after your order. <a href="#delivery" onclick="closeM()"><u>Delivery &amp; returns</u></a> · <a href="#sizes" onclick="closeM()"><u>Size guide</u></a></p></div></div>`;
+          `<button class="x" aria-label="Close">×</button><div class="pd"><div><div class="im" id="mainIm">${img(p)}</div>${im.length > 1 ? `<div class="thumbs">${im.map((u, i) => `<button data-th="${i}" class="${i ? "" : "on"}" aria-label="Photo ${i + 1}"><img src="${u}" alt=""></button>`).join("")}</div>` : ""}</div><div><h2>${esc(p.name)}</h2><p class="price" style="font-size:26px;margin:8px 0">${N(p.price)}</p><p class="st ${s == "out" ? "no" : "ok"}">${s == "out" ? "Not available" : s == "low" ? `Available — only ${p.stock} left` : `Available — ${p.stock} in stock`}</p><p style="margin:12px 0">${esc(p.desc)}</p><dl class="det">${det.map((d) => `<dt>${d[0]}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl><b>Size</b><div class="sizes">${sz.map((z, i) => `<button class="${i ? "" : "on"}" data-sz="${esc(z)}">${esc(z)}</button>`).join("")}</div><button class="btn" id="addB" ${s == "out" ? "disabled" : ""}>${s == "out" ? "Out of stock" : "Select this pair"}</button><p class="mut" style="margin-top:12px">Delivery is added at checkout. Fees may change if dispatch conditions require it. <a href="#delivery" onclick="closeM()"><u>Delivery &amp; returns</u></a> · <a href="#sizes" onclick="closeM()"><u>Size guide</u></a></p></div></div>`;
         $("#ov").classList.add("show");
         $("#modal .x").onclick = closeM;
         $("#modal")
@@ -1363,7 +1374,7 @@
               return `<div class="row"><div class="th">${img(p)}</div><div style="flex:1"><b>${esc(p.name)}</b><br>Size ${esc(c.size)} · ${N(p.price)}</div><button data-d="${i}" class="btn alt sm">−</button><b>${c.qty}</b><button data-u="${i}" class="btn alt sm">+</button></div>`;
             },
           ).join("")}
-<h3 style="margin:18px 0 4px">Your details</h3><form id="of"><div class="grid2"><div><label>Full name *</label><input name="name" required></div><div><label>Phone number *</label><input name="phone" required placeholder="e.g. 0803 000 0000" inputmode="tel" pattern="(0[789][0-9]{9}|234[789][0-9]{9})"></div><div><label>Email (optional)</label><input name="email" type="email"></div><div><label>City / State *</label><input name="city" required></div></div><label>Delivery address *</label><textarea name="addr" rows="2" required></textarea><label>Note (colour, extra size, etc.)</label><input name="note"><button class="order-btn" style="margin-top:16px;width:100%">Continue to bank transfer</button></form>`;
+<div class="checkout-totals" id="checkoutTotals"><span>Products subtotal</span><b>${N(subtotal())}</b><span>Delivery fee</span><b>Choose an area</b><strong>Grand total</strong><strong>${N(subtotal())}</strong></div><h3 style="margin:18px 0 4px">Delivery details</h3><form id="of"><div class="grid2"><div><label>Receiver's full name *</label><input name="name" required></div><div><label>Phone number *</label><input name="phone" required placeholder="e.g. 0803 000 0000" inputmode="tel" pattern="(0[789][0-9]{9}|234[789][0-9]{9})"></div><div><label>Email *</label><input name="email" type="email" required></div><div><label>Delivery state *</label><select name="state" id="deliveryState" required>${STATES.map(s=>`<option ${s==="Lagos"?"selected":""}>${s}</option>`).join("")}</select></div></div><div id="deliveryFields"></div><label>Order note (colour, extra size, etc.)</label><input name="note"><button class="order-btn" style="margin-top:16px;width:100%">Continue to bank transfer</button></form>`;
         $("#ov").classList.add("show");
         $("#modal .x").onclick = closeM;
         $("#modal")
@@ -1389,6 +1400,10 @@
                 openCart();
               }),
           );
+        const lgas=[...new Set(D.map(a=>a.lga))],fields=$("#deliveryFields"),state=$("#deliveryState"),totals=$("#checkoutTotals");
+        const updateTotals=()=>{const area=D.find(a=>a.id===$("#deliveryArea")?.value),other=$("#deliveryArea")?.value==="lag-other",arrangement=state.value!=="Lagos"||other,fee=area?Number(area.price):arrangement?STANDARD_UNPRICED_DELIVERY_FEE:null,total=fee===null?subtotal():subtotal()+fee;totals.innerHTML=`<span>Products subtotal</span><b>${N(subtotal())}</b><span>Delivery fee</span><b>${fee===null?"Choose an area":N(fee)}</b><strong>Grand total</strong><strong>${N(total)}</strong>`};
+        const renderDelivery=()=>{if(state.value!=="Lagos"){fields.innerHTML=`<p class="delivery-message">A standard delivery fee is included. Delivery fees may change if location, access or dispatch conditions require it.</p><label>Full delivery address *</label><textarea name="addr" rows="3" required></textarea><label>Nearest landmark *</label><input name="landmark" required>`;updateTotals();return}fields.innerHTML=`<div class="grid2"><div><label>Local Government Area *</label><select name="city" id="deliveryLga" required><option value="">Select Lagos LGA</option>${lgas.map(l=>`<option>${esc(l)}</option>`).join("")}</select></div><div><label>Specific area / neighbourhood *</label><select name="deliveryAreaId" id="deliveryArea" required disabled><option value="">Select LGA first</option></select></div></div><label>Nearest bus stop or landmark *</label><input name="landmark" id="deliveryLandmark" list="deliveryBusStops" required placeholder="Select a bus stop or type a landmark"><datalist id="deliveryBusStops"></datalist><label>House number and street name *</label><input name="street" required><label>Estate or building name and number <span class="mut">(optional)</span></label><input name="estate"><label>Extra directions or full address notes</label><textarea name="addr" rows="3" placeholder="Add directions or your full address if needed"></textarea>`;$("#deliveryLga").onchange=()=>{const lga=$("#deliveryLga").value,area=$("#deliveryArea"),stops=$("#deliveryBusStops");area.disabled=!lga;area.innerHTML=lga?`<option value="">Select area</option>${D.filter(a=>a.lga===lga).map(a=>`<option value="${esc(a.id)}">${esc(a.name)} — ${N(a.price)}</option>`).join("")}<option value="lag-other">Other Lagos area (not listed) — Standard fee applies</option>`:`<option value="">Select LGA first</option>`;stops.innerHTML=[...new Set(D.filter(a=>a.lga===lga).flatMap(a=>a.busStops||[]))].map(stop=>`<option value="${esc(stop)}"></option>`).join("");$("#deliveryLandmark").value="";updateTotals()};$("#deliveryArea").onchange=updateTotals;updateTotals()};
+        state.onchange=renderDelivery;renderDelivery();
         $("#of").onsubmit = (e) => {
           e.preventDefault();
           placeOrder(Object.fromEntries(new FormData(e.target)));
@@ -1409,7 +1424,8 @@
         const order = CURRENT_ORDER || LS.get("hz_order_" + id, null);
         if (!order) return page("Order", "<p>Order not found on this device.</p>");
         const account = (number, name, bank) => `<div class="cgrid"><div><b>${esc(bank)}</b><p>${esc(name)}</p><strong>${esc(number)}</strong> <button class="btn alt sm" data-copy="${esc(number)}">Copy</button></div></div>`;
-        return page("Bank transfer", `<p><b>Order number:</b> ${esc(order.id)}</p><p><b>Status:</b> <span class="pill">${esc(order.status)}</span></p><h2>Order summary</h2><div class="cgrid">${order.items.map((item) => `<div><b>${esc(item.name)}</b><br>Size ${esc(item.size)} · ${item.qty} × ${N(item.price)}</div>`).join("")}</div><p class="price">Total ${N(order.total)}</p><h2>Transfer to either account</h2>${account(S.bank1Number, S.bank1Name, S.bank1Bank)}${account(S.bank2Number, S.bank2Name, S.bank2Bank)}<p>Transfer the exact amount and use your order number as the payment reference.</p>${order.status === "Awaiting Payment" ? '<button class="btn payment-confirm" data-paid>Confirm Payment</button>' : order.status === "Payment Confirming" ? '<p><b>Thanks! We are confirming your payment. This usually takes a few minutes.</b></p>' : ""}`);
+        const pending=order.needsDeliveryArrangement||order.total==null,deliveryFee=Number(order.deliveryFee==null?STANDARD_UNPRICED_DELIVERY_FEE:order.deliveryFee),transferAmount=Number(order.total==null?(order.subtotal ?? order.items.reduce((a,i)=>a+i.qty*i.price,0))+deliveryFee:order.total),summary=`<div class="checkout-totals"><span>Products subtotal</span><b>${N(order.subtotal ?? order.items.reduce((a,i)=>a+i.qty*i.price,0))}</b><span>Delivery fee</span><b>${N(deliveryFee)}</b><strong>Grand total</strong><strong>${N(transferAmount)}</strong></div>`;
+        return page("Bank transfer", `<p><b>Order number:</b> ${esc(order.id)}</p><p><b>Status:</b> <span class="pill">${esc(order.status)}</span></p><h2>Order summary</h2><div class="cgrid">${order.items.map((item) => `<div><b>${esc(item.name)}</b><br>Size ${esc(item.size)} · ${item.qty} × ${N(item.price)}</div>`).join("")}</div>${summary}${pending?`<p class="delivery-message">Delivery fees may change if location, access or dispatch conditions require it.</p>`:""}<h2>Transfer to either account</h2>${account(S.bank1Number,S.bank1Name,S.bank1Bank)}${account(S.bank2Number,S.bank2Name,S.bank2Bank)}<p>Transfer the exact grand total and use your order number as the payment reference.</p>${order.status === "Awaiting Payment" ? '<button class="btn payment-confirm" data-paid>I have paid</button>' : order.status === "Payment Confirming" ? '<p><b>Thanks! We are confirming your payment.</b></p>' : ""}`);
       }
       const bindOrder = () => {
         document.querySelectorAll("[data-copy]").forEach((button) => button.onclick = async () => { await navigator.clipboard.writeText(button.dataset.copy); toast("Account number copied"); });
@@ -1438,14 +1454,19 @@
         if (!AUTH)
           return `<div class="wrap" style="max-width:380px;padding:60px 20px"><h1>Admin login</h1><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in</button></form></div>`;
         const checks = O.filter((o) => o.status == "Payment Confirming").length;
-        return `<div class="wrap adm"><div class="sh"><h1>Dashboard${checks ? ` <span class="payment-alert">${checks} payment check${checks == 1 ? "" : "s"} waiting</span>` : ""}</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${checks} payment checks)` : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
+        return `<div class="wrap adm"><div class="sh"><h1>Dashboard${checks ? ` <span class="payment-alert">${checks} payment check${checks == 1 ? "" : "s"} waiting</span>` : ""}</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "delivery", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${checks} payment checks)` : t === "delivery" ? "Delivery Areas & Prices" : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
       }
       function tab() {
         const tb = $("#tb");
         if (!tb) return;
         if (TAB == "orders") {
           const sorted = [...O].sort((a,b) => (b.status === "Payment Confirming") - (a.status === "Payment Confirming"));
-          tb.innerHTML = sorted.length ? sorted.map((o) => `<div class="ord ${o.status === "Payment Confirming" ? "payment-check" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${esc(o.id)}</b><span>${esc(o.date)}</span><span class="pill">${esc(o.status)}</span></div><p><b>${esc(o.name)}</b> · Phone ${esc(o.phone || "")} · ${esc(o.email || "No email")}</p><p>${esc(o.city)} — ${esc(o.addr)}</p><p>${o.items.map((x) => `${esc(x.name)} (size ${esc(x.size)}) ×${x.qty}`).join("; ")}</p>${o.note ? `<p>Note: ${esc(o.note)}</p>` : ""}<p class="price">Total ${N(o.total)}</p><div class="admin-order-actions">${o.status === "Payment Confirming" ? `<button class="btn sm" data-order-status="Confirmed" data-order-id="${esc(o.id)}">Confirm Payment</button><button class="btn alt sm" data-order-status="Cancelled" data-order-id="${esc(o.id)}">Reject / Not Paid</button>` : ""}${o.status === "Confirmed" ? `<button class="btn sm" data-order-status="Processing" data-order-id="${esc(o.id)}">Mark Processing</button>` : ""}${o.status === "Processing" ? `<button class="btn sm" data-order-status="Completed" data-order-id="${esc(o.id)}">Mark Completed</button>` : ""}</div><button class="btn alt sm" data-do="${O.indexOf(o)}">Delete</button></div>`).join("") : "<p>No orders yet.</p>";
+          tb.innerHTML = sorted.length ? sorted.map((o) => { const pending=o.needsDeliveryArrangement||o.total==null; return `<div class="ord ${o.status === "Payment Confirming" ? "payment-check" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${esc(o.id)}</b><span>${esc(o.date)}</span><span class="pill">${esc(o.status)}</span>${pending?'<span class="pill">Needs delivery arrangement</span>':''}</div><p><b>${esc(o.name)}</b> · Phone ${esc(o.phone || "")} · ${esc(o.email || "No email")}</p><p><b>State:</b> ${esc(o.state || "Not recorded")} · <b>Area:</b> ${esc(o.deliveryArea || o.city || "—")}</p><p><b>Address:</b> ${esc(o.street ? o.street + (o.estate ? ', ' + o.estate : '') : o.addr || "—")}</p><p><b>Landmark:</b> ${esc(o.landmark || "—")}${o.addr&&o.street?` · <b>Directions:</b> ${esc(o.addr)}`:''}</p><p>${o.items.map((x) => `${esc(x.name)} (size ${esc(x.size)}) ×${x.qty}`).join("; ")}</p>${o.note ? `<p>Note: ${esc(o.note)}</p>` : ""}<p class="price">Subtotal ${N(o.subtotal ?? 0)} · Delivery ${pending?'To be confirmed':N(o.deliveryFee||0)} · ${pending?'Product payment': 'Total'} ${N(pending?(o.subtotal ?? 0):o.total)}</p><div class="admin-order-actions">${o.status === "Payment Confirming" ? `<button class="btn sm" data-order-status="Confirmed" data-order-id="${esc(o.id)}">Confirm Payment</button><button class="btn alt sm" data-order-status="Cancelled" data-order-id="${esc(o.id)}">Reject / Not Paid</button>` : ""}${o.status === "Confirmed" ? `<button class="btn sm" data-order-status="Processing" data-order-id="${esc(o.id)}">Mark Processing</button>` : ""}${o.status === "Processing" ? `<button class="btn sm" data-order-status="Completed" data-order-id="${esc(o.id)}">Mark Completed</button>` : ""}</div><button class="btn alt sm" data-do="${O.indexOf(o)}">Delete</button></div>`; }).join("") : "<p>No orders yet.</p>";
+          return;
+        }
+        if (TAB == "delivery") {
+          const groups = [...new Set(D.map(a => a.lga))];
+          tb.innerHTML = `<div class="sh"><div><h2>Delivery Areas and Prices</h2><p class="mut">Dispatch starts from Obalende, Lagos Island. Changes save immediately and appear at checkout.</p></div></div><button class="btn sm" id="delivery-add">+ Add Lagos area</button>${groups.map(group => `<section class="ord"><h3>${esc(group)}</h3>${D.filter(a=>a.lga===group).sort((a,b)=>a.sort-b.sort).map(a=>`<div class="delivery-admin-row"><span><b>${esc(a.name)}</b><small>${esc(a.zone || group)} · ${a.enabled?'Enabled':'Disabled'}</small></span><span>${N(a.price)}</span><button class="btn alt sm" data-delivery-edit="${esc(a.id)}">Edit</button><button class="btn alt sm" data-delivery-up="${esc(a.id)}">↑</button><button class="btn alt sm" data-delivery-down="${esc(a.id)}">↓</button><button class="btn alt sm" data-delivery-delete="${esc(a.id)}">Delete</button></div>`).join('')}</section>`).join('') || '<p>No delivery areas yet.</p>'}`;
           return;
         }
         if (TAB == "products") {
@@ -1629,6 +1650,24 @@
           i.src = URL.createObjectURL(file);
         });
       }
+      async function saveDeliveryAreas() {
+        D = await api("PUT", "delivery-areas", D);
+        tab();
+      }
+      function editDeliveryArea(id) {
+        const existing = id ? D.find((area) => area.id === id) : null;
+        const area = existing || { id: "lag-" + Date.now(), name: "", lga: "", zone: "", price: 0, enabled: true, sort: D.length };
+        $("#modal").innerHTML = `<button class="x" aria-label="Close">×</button><h2>${existing ? "Edit" : "Add"} Lagos delivery area</h2><form id="delivery-form"><div class="grid2"><div><label>Area / neighbourhood *</label><input name="name" value="${esc(area.name)}" required></div><div><label>LGA *</label><input name="lga" value="${esc(area.lga)}" placeholder="e.g. Ikeja" required></div><div><label>Dispatch group</label><input name="zone" value="${esc(area.zone)}" placeholder="e.g. Mainland central"></div><div><label>Delivery fee (₦) *</label><input name="price" type="number" min="0" step="50" value="${Number(area.price) || 0}" required></div></div><label>Bus stops for this LGA <span class="mut">(comma separated)</span></label><textarea name="busStops" rows="3" placeholder="e.g. Alausa, Computer Village, Maryland">${esc((area.busStops || []).join(", "))}</textarea><label style="display:flex;align-items:center;gap:8px;margin-top:12px"><input name="enabled" type="checkbox" ${area.enabled ? "checked" : ""}> Available at checkout</label><button class="btn" style="margin-top:16px">Save delivery area</button></form>`;
+        $("#ov").classList.add("show");
+        $("#modal .x").onclick = closeM;
+        $("#delivery-form").onsubmit = async (event) => {
+          event.preventDefault();
+          const form = Object.fromEntries(new FormData(event.target));
+          Object.assign(area, { name: form.name.trim(), lga: form.lga.trim(), zone: form.zone.trim(), price: Number(form.price), enabled: form.enabled === "on", busStops: form.busStops.split(/[,\n]/).map(stop => stop.trim()).filter(Boolean) });
+          if (!existing) D.push(area);
+          try { await saveDeliveryAreas(); closeM(); toast("Delivery area saved"); } catch (error) { toast(error.message); }
+        };
+      }
       function bindAdmin() {
         const lf = $("#lf");
         if (lf)
@@ -1663,6 +1702,31 @@
         $("#tb").onclick = async (e) => {
           const t = e.target;
           if (t.id == "np") editP();
+          if (t.id == "delivery-add") { editDeliveryArea(); return; }
+          const deliveryEdit = t.closest("[data-delivery-edit]");
+          if (deliveryEdit) { editDeliveryArea(deliveryEdit.dataset.deliveryEdit); return; }
+          const deliveryDelete = t.closest("[data-delivery-delete]");
+          if (deliveryDelete) {
+            const area = D.find((item) => item.id === deliveryDelete.dataset.deliveryDelete);
+            if (area && confirm(`Delete delivery area “${area.name}”?`)) {
+              D = D.filter((item) => item.id !== area.id);
+              try { await saveDeliveryAreas(); toast("Delivery area deleted"); } catch (error) { toast(error.message); }
+            }
+            return;
+          }
+          const deliveryMove = t.closest("[data-delivery-up], [data-delivery-down]");
+          if (deliveryMove) {
+            const id = deliveryMove.dataset.deliveryUp || deliveryMove.dataset.deliveryDown;
+            const area = D.find((item) => item.id === id), direction = deliveryMove.dataset.deliveryUp ? -1 : 1;
+            const group = area ? D.filter((item) => item.lga === area.lga).sort((a,b) => a.sort - b.sort) : [];
+            const index = group.findIndex((item) => item.id === id);
+            if (index >= 0 && index + direction >= 0 && index + direction < group.length) {
+              const other = group[index + direction], oldSort = area.sort;
+              area.sort = other.sort; other.sort = oldSort;
+              try { await saveDeliveryAreas(); } catch (error) { toast(error.message); }
+            }
+            return;
+          }
           const photoDelete = t.closest("[data-photo-del]");
           if (photoDelete) {
             const p = P.find((x) => x.id == photoDelete.dataset.photoDel);
@@ -1735,10 +1799,11 @@
         if (pg == "order" && arg) { try { CURRENT_ORDER = await api("GET", "orders/" + arg + "/status"); } catch (e) { CURRENT_ORDER = LS.get("hz_order_" + arg, null); } }
         if (pg == "admin" && AUTH) {
           try {
-            [O, P, S] = await Promise.all([
+            [O, P, S, D] = await Promise.all([
               api("GET", "orders"),
               api("GET", "products"),
               api("GET", "settings"),
+              api("GET", "delivery-areas"),
             ]);
           } catch (e) {}
         }
@@ -1816,9 +1881,10 @@
       }
       (async () => {
         try {
-          [P, S] = await Promise.all([
+          [P, S, D] = await Promise.all([
             api("GET", "products"),
             api("GET", "config"),
+            api("GET", "delivery-areas"),
           ]);
         } catch (e) {
           toast("Could not load products. Is the server running?");
