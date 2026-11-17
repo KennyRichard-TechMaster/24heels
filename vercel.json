@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/api/bootstrap","destination":"/api/bootstrap-handler"},{"source":"/api/(.*)","destination":"/api/index?path=$1"}]}
+{"rewrites":[{"source":"/api/(?!bootstrap$)(.*)","destination":"/api/index?path=$1"}]}

@@ -13,13 +13,9 @@ module.exports = async (req, res) => {
   try {
     if (req.method !== 'POST') return respond(res, 405, { error: 'Method not allowed' });
     const requestBody = await readBody(req);
-    if (!process.env.ADMIN_PASSWORD || requestBody.password !== process.env.ADMIN_PASSWORD) {
-      return respond(res, 401, { error: 'Unauthorized' });
-    }
-
+    if (!process.env.ADMIN_PASSWORD || requestBody.password !== process.env.ADMIN_PASSWORD) return respond(res, 401, { error: 'Unauthorized' });
     const q = db();
     await q`CREATE TABLE IF NOT EXISTS products (id text PRIMARY KEY,data jsonb NOT NULL,updated_at timestamptz DEFAULT now()); CREATE TABLE IF NOT EXISTS orders (id text PRIMARY KEY,date text NOT NULL,status text NOT NULL,subtotal numeric NOT NULL,delivery_fee numeric NOT NULL DEFAULT 0,total numeric NOT NULL,needs_delivery_arrangement boolean NOT NULL DEFAULT false,customer jsonb NOT NULL,data jsonb NOT NULL,created_at timestamptz DEFAULT now()); CREATE TABLE IF NOT EXISTS order_items (order_id text REFERENCES orders(id) ON DELETE CASCADE,product_id text,name text,size text,qty integer,price numeric,PRIMARY KEY(order_id,product_id,size)); CREATE TABLE IF NOT EXISTS delivery_areas (id text PRIMARY KEY,name text NOT NULL,lga text NOT NULL,zone text,price numeric NOT NULL,enabled boolean NOT NULL DEFAULT true,sort integer NOT NULL DEFAULT 0,bus_stops jsonb NOT NULL DEFAULT '[]'::jsonb); CREATE TABLE IF NOT EXISTS admin_settings (id boolean PRIMARY KEY DEFAULT true,data jsonb NOT NULL,updated_at timestamptz DEFAULT now())`;
-
     const legacyPath = path.join(process.cwd(), 'data', 'db.json');
     if (!fs.existsSync(legacyPath)) return respond(res, 200, { imported: false, reason: 'No legacy data file found' });
     const legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8'));
@@ -31,8 +27,5 @@ module.exports = async (req, res) => {
       for (const item of order.items || []) await q`INSERT INTO order_items(order_id,product_id,name,size,qty,price) VALUES(${order.id},${item.id},${item.name},${item.size},${item.qty},${item.price}) ON CONFLICT DO NOTHING`;
     }
     return respond(res, 200, { imported: true, products: (legacy.products || []).length, orders: (legacy.orders || []).length, areas: (legacy.deliveryAreas || []).length });
-  } catch (error) {
-    console.error(error);
-    return respond(res, 500, { error: 'Bootstrap failed' });
-  }
+  } catch (error) { console.error(error); return respond(res, 500, { error: 'Bootstrap failed' }); }
 };
