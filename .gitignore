@@ -1,5 +1,5 @@
 node_modules/
 .env
-# Legacy product images are committed once only so Vercel can migrate them to Blob.
+data/uploads/
 
 .vercel
