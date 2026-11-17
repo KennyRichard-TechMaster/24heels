@@ -1,1 +1,22 @@
-require('./lib/env');const http=require('http'),fs=require('fs'),path=require('path'),api=require('./api');const pub=path.join(__dirname,'public'),mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};http.createServer((req,res)=>{if(req.url.startsWith('/api/')){res.status=c=>({json:x=>{res.writeHead(c,{'Content-Type':'application/json'});res.end(JSON.stringify(x))}});req.query={path:req.url.split('?')[0].slice(5)};return api(req,res)}let f=path.join(pub,decodeURIComponent(req.url.split('?')[0]||'/').replace(/^\//,''));if(!f.startsWith(pub)||!fs.existsSync(f)||fs.statSync(f).isDirectory())f=path.join(pub,'index.html');res.writeHead(200,{'Content-Type':mime[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res)}).listen(process.env.PORT||3000);
+require('./lib/env');
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const api = require('./api');
+const bootstrap = require('./lib/bootstrap');
+const publicDir = path.join(__dirname, 'public');
+const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
+
+http.createServer((req, res) => {
+  const pathname = req.url.split('?')[0];
+  if (pathname === '/api/bootstrap') return bootstrap(req, res);
+  if (pathname.startsWith('/api/')) {
+    res.status = code => ({ json: data => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(data)); } });
+    req.query = { path: pathname.slice(5) };
+    return api(req, res);
+  }
+  let file = path.join(publicDir, decodeURIComponent(pathname || '/').replace(/^\//, ''));
+  if (!file.startsWith(publicDir) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) file = path.join(publicDir, 'index.html');
+  res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream' });
+  fs.createReadStream(file).pipe(res);
+}).listen(process.env.PORT || 3000);
