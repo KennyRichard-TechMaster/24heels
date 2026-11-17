@@ -45,3 +45,11 @@ Admin > Settings controls the About, Delivery, Returns and Payment text, plus ph
 These pages show your text: About, Delivery & returns, FAQ, Contact. Check every line is true for the business before launch.
 
 # 24heels
+# Vercel + Neon deployment
+
+Runtime product, order, delivery and settings data is stored in Neon Postgres. Product images uploaded through Admin are stored in Vercel Blob.
+
+1. Copy `.env.example` to `.env` and set `DATABASE_URL`, `BLOB_READ_WRITE_TOKEN`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and a long random `SESSION_SECRET`.
+2. Run `npm install`, `npm run db:migrate`, `npm run import:json`, and `npm run migrate:images` once. The last two commands preserve existing `data/db.json` records and locally stored product images.
+3. Start locally with `npm start`, then open `http://localhost:3000`.
+4. In Vercel, add the same environment variables, connect the repository, and deploy. Run the migration/import/image commands from a machine with the same environment variables before the first production deployment.
