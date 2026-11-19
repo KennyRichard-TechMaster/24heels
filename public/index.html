@@ -487,6 +487,8 @@
       .tabs .on::before { background:#fff; }
       .admin-side-bottom { margin-top:auto; padding:14px 5px 0; }
       .admin-side-bottom .btn { width:100%; background:#ffffff10; color:#fff; border-color:#ffffff27; }
+      .admin-menu-toggle,
+      .admin-menu-backdrop { display:none; }
       .admin-workspace { min-width:0; height:100dvh; overflow-y:auto; }
       .admin-head { display:flex; position:sticky; top:0; z-index:5; align-items:center; justify-content:space-between; gap:18px; padding:23px 28px; border-bottom:1px solid #e3e4ed; background:#fffffff5; backdrop-filter:blur(12px); }
       .admin-head h1 { margin:0; color:#171827; font-size:25px; }
@@ -580,6 +582,49 @@
         .admin-chart svg { height:142px; }
         .admin-chart-labels { font-size:10px; }
         .admin-quick button { min-height:40px; font-size:12px; }
+      }
+      /* Mobile keeps the full navigation hierarchy in a compact slide-out rail. */
+      @media (max-width:760px) {
+        .admin-shell { position:relative; overflow:visible; }
+        .admin-side {
+          position:fixed;
+          z-index:102;
+          top:0;
+          bottom:0;
+          left:0;
+          width:min(250px,82vw);
+          height:100dvh;
+          padding:22px 13px;
+          overflow-y:auto;
+          transform:translateX(-105%);
+          transition:transform .24s ease;
+          box-shadow:12px 0 30px #17112142;
+        }
+        .admin-shell.menu-open .admin-side { transform:translateX(0); }
+        .admin-brand { display:block; }
+        .tabs { display:grid; width:auto; overflow:visible; margin:22px 0 0; gap:4px; }
+        .tabs button { width:100%; padding:11px 12px; font-size:14px; }
+        .tabs button::before { display:block; }
+        .admin-side-bottom { display:block; margin-top:auto; padding:14px 5px 0; }
+        .admin-side-bottom .btn { width:100%; padding:10px; font-size:14px; }
+        .admin-menu-toggle {
+          display:grid;
+          flex:none;
+          gap:4px;
+          width:36px;
+          height:36px;
+          place-content:center;
+          margin-right:2px;
+          border:1px solid #e1d2d9;
+          border-radius:8px;
+          background:#fff;
+        }
+        .admin-menu-toggle i { display:block; width:16px; height:2px; background:#7d1640; }
+        .admin-menu-backdrop { position:fixed; z-index:101; inset:0; border:0; background:#17112175; opacity:0; pointer-events:none; transition:opacity .24s ease; }
+        .admin-shell.menu-open .admin-menu-backdrop { display:block; opacity:1; pointer-events:auto; }
+        .admin-head { position:sticky; top:0; z-index:6; justify-content:flex-start; }
+        .admin-head > div { min-width:0; }
+        .admin-head .btn { margin-left:auto; }
       }
       .checkout-totals { display:grid; grid-template-columns:1fr auto; gap:9px 18px; margin:18px 0; padding:16px; border:1px solid var(--line); border-radius:10px; background:#fff; }
       .checkout-totals strong { padding-top:9px; border-top:1px solid var(--line); }
@@ -1576,7 +1621,7 @@
           return `<div class="wrap" style="max-width:420px;padding:60px 20px"><section class="ord"><div class="eyebrow">24 Heelz NG operations</div><h1>Admin login</h1><p class="mut">Manage orders, products, delivery pricing and team access.</p><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in securely</button></form></section></div>`;
         const checks = O.filter((o) => o.status == "Payment Confirming").length;
         const labels = { overview: "Overview", orders: `Orders${checks ? ` (${checks})` : ""}`, products: "Products", delivery: "Delivery prices", admins: "Admin accounts", settings: "Store settings" };
-        return `<div class="wrap adm"><div class="admin-shell"><aside class="admin-side"><div class="admin-brand"><b>24 HEELZ NG</b><small>ADMIN CONSOLE</small></div><nav class="tabs">${Object.entries(labels).map(([key,label])=>`<button data-t="${key}" class="${key==TAB?"on":""}">${label}</button>`).join("")}</nav><div class="admin-side-bottom"><button class="btn alt sm" id="lo">Log out</button></div></aside><section class="admin-workspace"><header class="admin-head"><div><div class="eyebrow">24 Heelz NG operations</div><h1>${labels[TAB] || "Dashboard"}</h1><p>Manage your boutique from one secure workspace.</p></div><a class="btn alt sm" href="#shop">View store</a></header><main class="admin-main"><div id="tb"></div></main></section></div></div>`;
+        return `<div class="wrap adm"><div class="admin-shell"><button class="admin-menu-backdrop" id="adminMenuBackdrop" aria-label="Close admin menu"></button><aside class="admin-side"><div class="admin-brand"><b>24 HEELZ NG</b><small>ADMIN CONSOLE</small></div><nav class="tabs">${Object.entries(labels).map(([key,label])=>`<button data-t="${key}" class="${key==TAB?"on":""}">${label}</button>`).join("")}</nav><div class="admin-side-bottom"><button class="btn alt sm" id="lo">Log out</button></div></aside><section class="admin-workspace"><header class="admin-head"><button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Open admin menu" aria-expanded="false"><i></i><i></i><i></i></button><div><div class="eyebrow">24 Heelz NG operations</div><h1>${labels[TAB] || "Dashboard"}</h1><p>Manage your boutique from one secure workspace.</p></div><a class="btn alt sm" href="#shop">View store</a></header><main class="admin-main"><div id="tb"></div></main></section></div></div>`;
       }
       function tab() {
         const tb = $("#tb");
@@ -1839,6 +1884,17 @@
             }
           };
         if (!AUTH) return;
+        const adminShell = document.querySelector(".admin-shell");
+        const adminMenuToggle = $("#adminMenuToggle");
+        const closeAdminMenu = () => {
+          adminShell?.classList.remove("menu-open");
+          adminMenuToggle?.setAttribute("aria-expanded", "false");
+        };
+        adminMenuToggle && (adminMenuToggle.onclick = () => {
+          const open = adminShell?.classList.toggle("menu-open");
+          adminMenuToggle.setAttribute("aria-expanded", String(!!open));
+        });
+        $("#adminMenuBackdrop") && ($("#adminMenuBackdrop").onclick = closeAdminMenu);
         $("#lo").onclick = () => {
           AUTH = false;
           TOKEN = "";
