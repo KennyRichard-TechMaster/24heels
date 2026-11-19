@@ -93,9 +93,11 @@ module.exports = async (request, response) => {
     if (request.method === 'PUT' && route === 'products') { const input = await body(request); for (const product of input) await query`INSERT INTO products(id,data) VALUES(${product.id},${JSON.stringify(product)}::jsonb) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated_at=now()`; return out(response, 200, input); }
     if (request.method === 'PUT' && route === 'delivery-areas') { const input = await body(request); for (const area of input) await query`INSERT INTO delivery_areas(id,state,name,lga,zone,price,enabled,sort,bus_stops) VALUES(${area.id},${area.state || 'Lagos'},${area.name},${area.lga},${area.zone || ''},${area.price},${!!area.enabled},${area.sort || 0},${JSON.stringify(area.busStops || [])}::jsonb) ON CONFLICT(id) DO UPDATE SET state=excluded.state,name=excluded.name,lga=excluded.lga,zone=excluded.zone,price=excluded.price,enabled=excluded.enabled,sort=excluded.sort,bus_stops=excluded.bus_stops`; return out(response, 200, input); }
     if (request.method === 'PUT' && route === 'settings') { const input = await body(request); await query`INSERT INTO admin_settings(id,data) VALUES(true,${JSON.stringify(input)}::jsonb) ON CONFLICT(id) DO UPDATE SET data=excluded.data`; return out(response, 200, input); }
-    match = route.match(/^orders\/(24H-[^/]+)$/);
-    if (match && request.method === 'DELETE') { await query`DELETE FROM orders WHERE id=${match[1]}`; return out(response, 200, { ok: 1 }); }
-    if (match && request.method === 'PATCH') { const input = await body(request), order = (await query`SELECT data FROM orders WHERE id=${match[1]}`)[0]?.data; if (!order) return out(response, 404, { error: 'Not found' }); order.status = S(input.status, 40); await query`UPDATE orders SET status=${order.status},data=${JSON.stringify(order)}::jsonb WHERE id=${order.id}`; return out(response, 200, order); }
+    // Orders imported from the original JSON store use ORD-0001 style IDs,
+    // while newer orders use 24H-timestamp IDs. Both must remain manageable.
+    match = route.match(/^orders\/([^/]+)$/);
+    if (match && request.method === 'DELETE') { await query`DELETE FROM orders WHERE id=${decodeURIComponent(match[1])}`; return out(response, 200, { ok: 1 }); }
+    if (match && request.method === 'PATCH') { const id = decodeURIComponent(match[1]), input = await body(request), order = (await query`SELECT data FROM orders WHERE id=${id}`)[0]?.data; if (!order) return out(response, 404, { error: 'Not found' }); order.status = S(input.status, 40); await query`UPDATE orders SET status=${order.status},data=${JSON.stringify(order)}::jsonb WHERE id=${order.id}`; return out(response, 200, order); }
     return out(response, 404, { error: 'Not found' });
   } catch (error) { console.error(error); return out(response, 500, { error: 'Server error' }); }
 };
