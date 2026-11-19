@@ -306,6 +306,13 @@
         justify-content: space-between;
         align-items: center;
       }
+      .footer-credit {
+        display:inline-block;
+        margin-top:6px;
+        color:#a99ba2;
+        font-size:10px;
+        letter-spacing:.08em;
+      }
       .ov {
         position: fixed;
         inset: 0;
@@ -540,6 +547,39 @@
         .admin-main { padding:16px; }
         .admin-access { grid-template-columns:1fr; }
         .admin-panel-title { align-items:start; flex-direction:column; }
+      }
+      /* A phone dashboard is intentionally a one-column workspace, not a
+         scaled-down desktop grid. This also protects very narrow devices. */
+      @media (max-width:560px) {
+        body.admin-mode,
+        body.admin-mode #app,
+        body.admin-mode .adm,
+        body.admin-mode .admin-shell { width:100%; max-width:100%; overflow-x:clip; }
+        .admin-side { padding:9px 8px; }
+        .tabs { width:100%; gap:4px; padding:0 1px 2px; scrollbar-width:none; }
+        .tabs::-webkit-scrollbar { display:none; }
+        .tabs button { flex:0 0 auto; padding:8px 10px; font-size:11px; }
+        .tabs button::before { display:none; }
+        .admin-side-bottom { display:block; margin:6px 0 0; padding:0; }
+        .admin-side-bottom .btn { width:auto; padding:7px 10px; font-size:11px; }
+        .admin-head { padding:15px 14px; }
+        .admin-head h1 { font-size:22px; }
+        .admin-head p { font-size:12px; }
+        .admin-head .btn { display:none; }
+        .admin-main { padding:14px 12px 28px; }
+        .admin-panel-title { margin-bottom:14px; gap:6px; }
+        .admin-panel-title h2 { font-size:23px; }
+        .admin-panel-title .mut { font-size:12px; }
+        .admin-stat-grid { grid-template-columns:minmax(0,1fr); gap:10px; }
+        .admin-stat { padding:14px; }
+        .admin-stat b { font-size:22px; }
+        .admin-overview-grid,
+        .admin-access { grid-template-columns:minmax(0,1fr); gap:12px; }
+        .ord { min-width:0; padding:14px; overflow:hidden; }
+        .admin-chart { height:178px; margin-top:13px; }
+        .admin-chart svg { height:142px; }
+        .admin-chart-labels { font-size:10px; }
+        .admin-quick button { min-height:40px; font-size:12px; }
       }
       .checkout-totals { display:grid; grid-template-columns:1fr auto; gap:9px 18px; margin:18px 0; padding:16px; border:1px solid var(--line); border-radius:10px; background:#fff; }
       .checkout-totals strong { padding-top:9px; border-top:1px solid var(--line); }
@@ -970,7 +1010,7 @@
           across Nigeria.
         </div>
         <div id="ft" style="display: flex; gap: 44px; flex-wrap: wrap"></div>
-        <div>© 2026 24 Heelz NG</div>
+        <div>© 2026 24 Heelz NG<br /><small class="footer-credit">By New Era</small></div>
       </div>
     </footer>
     <script>
