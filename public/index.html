@@ -869,11 +869,12 @@
           ><details class="nav-drop"><summary>Fresh arrivals <span aria-hidden="true">⌄</span></summary><div class="nav-sub"><a href="#new">New in</a><a href="#new/restocked">Restocked</a></div></details
           ><a href="#lookbook" data-n="lookbook">Lookbook</a
           ><a href="#about" data-n="about">About</a
-          ><a href="#delivery" data-n="delivery">Delivery</a
-          ><a href="#contact" data-n="contact" class="contact-nav" aria-label="Contact" title="Contact"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="7.5" r="4.5"/><path d="M3.5 21c0-4.5 3.8-7.5 8.5-7.5s8.5 3 8.5 7.5"/></svg></a
+          ><a href="#delivery" data-n="delivery">Delivery</a>
         </nav>
+        <a class="search-nav" href="#shop" aria-label="Search products" title="Search products"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.3 4.3"/></svg></a>
+        <a href="#contact" data-n="contact" class="contact-nav account-nav" aria-label="Contact" title="Contact"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="7.5" r="4.5"/><path d="M3.5 21c0-4.5 3.8-7.5 8.5-7.5s8.5 3 8.5 7.5"/></svg></a>
         <button class="cartbtn" id="cartBtn" aria-label="Open cart">
-          <span aria-hidden="true">🛍</span><span class="cart-label"> Cart</span> <span id="cc">0</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6.1"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17.5" cy="20" r="1.2"/></svg><span class="cart-label"> Cart</span><span id="cc">0</span>
         </button>
       </div>
     </header>
@@ -2185,6 +2186,127 @@
           const intro = `<div class="wrap" style="padding-top:48px"><div class="eyebrow">24 HEELZ NG · SHOP</div><h1 style="font-size:52px">${title}</h1><p style="color:var(--mute)">Explore our heel-led edit, plus a dedicated slippers collection for softer moments.</p>${tabs}</div>`;
           if (isCollection) return `${intro}<section class="collection-products"><div class="wrap"><div class="product-grid">${list.map(cardH).join("") || '<p class="collection-empty">No products yet.</p>'}</div></div></section>`;
           return intro + shopCarouselRows("Statement heels", heels, "#shop/heels", 3, "statement-heels-carousel") + (slippers.length ? shopCarouselRows("The slipper collection", slippers, "#shop/Slippers", 2) : "") + shopCarouselRows("Handbags", P.filter(isBag), "#shop/handbags", 2);
+        };
+        if (!location.hash || location.hash === "#home") window.dispatchEvent(new Event("hashchange"));
+      })();
+    </script>
+    <style>
+      /* 24 Heelz light hero and navigation redesign */
+      :root { --hero-wine:#720d29; --hero-ink:#1a1a1a; --hero-blush:#f9e6ea; }
+      header, header.scrolled, body:has(main .heel-home) header, body:has(main .heel-home) header.scrolled { position:fixed; inset:0 0 auto; z-index:60; background:rgba(255,255,255,.96) !important; color:var(--hero-ink) !important; border-bottom:1px solid #eadde0; box-shadow:0 5px 20px #5b10200b; backdrop-filter:blur(12px) !important; -webkit-backdrop-filter:blur(12px) !important; }
+      header .nav { height:88px; display:flex; max-width:1400px; gap:14px; }
+      header .brand { flex:0 0 auto; gap:9px; color:var(--hero-wine); font:700 13px/1 "DM Sans",sans-serif; letter-spacing:.13em; }
+      header .brand img { width:auto !important; height:58px !important; }
+      header .brand span { display:none; }
+      .nav nav { display:flex !important; align-items:center; gap:8px; margin-left:auto; }
+      body:has(main .heel-home) .nav nav a, body:has(main .heel-home) .nav-drop summary, .nav nav a, .nav-drop summary { color:var(--hero-ink) !important; }
+      .nav nav > a, .nav-drop summary { padding:10px 13px; border-radius:999px; font:700 13px/1 "DM Sans",sans-serif; }
+      .nav nav > a.on { background:var(--hero-wine) !important; color:#fff !important; }
+      .nav-drop .nav-sub, body:has(main .heel-home) .nav-drop .nav-sub { background:#fff !important; border:1px solid #eddde1; box-shadow:0 12px 28px #4c0a1820; }
+      .nav-drop .nav-sub a, body:has(main .heel-home) .nav-drop .nav-sub a { color:var(--hero-ink) !important; }
+      .search-nav, .account-nav, .cartbtn { color:var(--hero-wine) !important; }
+      .search-nav, .account-nav { display:grid; place-items:center; width:38px; height:38px; padding:0; border:0; }
+      .search-nav svg, .account-nav svg, .cartbtn svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+      .cartbtn { position:relative; display:grid !important; place-items:center; width:42px; height:42px; padding:0 !important; border:0 !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important; }
+      .cartbtn:hover { background:#fdf4f6 !important; color:var(--hero-wine) !important; transform:none !important; }
+      .cart-label { display:none; }
+      .cartbtn #cc { position:absolute; top:1px; right:0; min-width:18px !important; height:18px !important; margin:0 !important; padding:0 4px; background:var(--hero-wine) !important; color:#fff !important; font-size:10px; }
+      .menu-toggle { color:var(--hero-wine) !important; }
+      .hero-redesign { position:relative; isolation:isolate; min-height:742px; overflow:hidden; padding:0; background:#fff !important; color:var(--hero-ink); }
+      .hero-redesign::before, .hero-redesign::after { content:""; position:absolute; z-index:-2; pointer-events:none; background:var(--hero-wine); }
+      .hero-redesign::before { width:230px; height:230px; top:-146px; left:-70px; border-radius:42% 58% 70% 30% / 34% 34% 66% 66%; transform:rotate(-20deg); }
+      .hero-redesign::after { width:300px; height:150px; right:-145px; bottom:-88px; border-radius:70% 0 0 0; transform:rotate(-18deg); }
+      .hero-redesign .wrap { position:relative; z-index:1; display:grid; grid-template-columns:minmax(410px,.86fr) minmax(560px,1.14fr); align-items:center; min-height:742px; padding-top:102px; }
+      .hero-redesign .heel-home-copy { max-width:540px; color:var(--hero-ink); }
+      .hero-redesign .eyebrow { display:flex; align-items:center; gap:13px; color:var(--hero-wine); font:800 14px/1.2 "DM Sans",sans-serif; letter-spacing:.02em; }
+      .hero-redesign .eyebrow::after { content:""; display:block; width:86px; height:1px; background:var(--hero-wine); }
+      .hero-redesign h1 { margin:25px 0 20px; max-width:none; color:var(--hero-ink); font:600 clamp(62px,6.2vw,100px)/.94 "Playfair Display",serif; letter-spacing:-.065em; }
+      .hero-redesign h1 em { color:var(--hero-wine); font-weight:500; }
+      .hero-redesign p { max-width:43ch; margin:0 0 28px; color:#29272a; font:500 17px/1.55 "DM Sans",sans-serif; }
+      .hero-actions { display:flex; align-items:center; flex-wrap:wrap; gap:16px; }
+      .hero-actions .btn { display:inline-flex; align-items:center; justify-content:center; gap:16px; min-width:205px; padding:15px 23px; border:1.5px solid var(--hero-wine); border-radius:999px; box-shadow:none; font:800 15px/1 "DM Sans",sans-serif; }
+      .hero-actions .hero-primary { background:var(--hero-wine) !important; color:#fff !important; }
+      .hero-actions .hero-primary:hover { background:#550819 !important; }
+      .hero-actions .hero-secondary { background:#fff !important; color:var(--hero-wine) !important; }
+      .hero-actions .hero-secondary:hover { background:#fff5f7 !important; }
+      .hero-actions span { font-size:26px; line-height:.5; }
+      .hero-redesign .heel-home-art { position:relative; z-index:1; display:block; align-self:end; justify-self:end; width:min(100%,730px); height:640px; max-width:none; }
+      .hero-redesign .heel-home-art::before { content:""; position:absolute; z-index:-2; width:610px; height:510px; right:-80px; bottom:18px; border-radius:50% 44% 46% 54%; background:var(--hero-blush); filter:none; }
+      .hero-redesign .heel-home-art::after { content:""; position:absolute; z-index:-1; width:520px; height:520px; right:20px; top:11px; border:4px solid var(--hero-wine); border-radius:50%; opacity:.94; }
+      .hero-redesign .heel-home-art img { position:absolute; z-index:1; right:-38px; bottom:0; display:block; width:100%; height:100%; object-fit:contain; object-position:right bottom; filter:none; }
+      .hero-slider-dots { position:absolute; z-index:3; left:max(24px,calc((100vw - 1400px)/2 - 56px)); top:55%; display:grid; gap:13px; }
+      .hero-slider-dots span { width:13px; height:13px; border-radius:50%; background:#ddd; }
+      .hero-slider-dots span.active { background:var(--hero-wine); }
+      .hero-trust-strip { position:relative; z-index:4; margin:-48px auto 0; padding:0 20px 36px; background:#fff; }
+      .hero-trust-strip .wrap { display:grid; grid-template-columns:repeat(4,1fr); max-width:1200px; overflow:hidden; border:1px solid #f0d9df; border-radius:34px; background:#fff; box-shadow:0 12px 28px #59101b12; }
+      .hero-trust-strip .wrap > div { display:flex; align-items:center; justify-content:center; gap:13px; min-height:94px; padding:15px 21px; color:var(--hero-ink); font:800 14px/1.25 "DM Sans",sans-serif; text-align:left; }
+      .hero-trust-strip .wrap > div + div { border-left:1px solid var(--hero-wine); }
+      .trust-icon { flex:none; width:31px; height:31px; fill:none; stroke:var(--hero-wine); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+      .trust-icon:first-child { fill:none; }
+      @media (max-width:900px) {
+        header .nav { height:70px; gap:5px; padding:0 16px; }
+        header .brand img { height:48px !important; }
+        .nav nav { margin-left:0; }
+        .account-nav { display:none; }
+        .search-nav { order:1; margin-left:auto; }
+        .cartbtn { order:2; width:38px; }
+        .menu-toggle { display:block !important; order:3; margin:0; }
+        .menu-toggle::before, .menu-toggle::after { background:var(--hero-wine) !important; }
+        .menu-toggle::before { box-shadow:0 6px var(--hero-wine),0 12px var(--hero-wine) !important; }
+        .nav nav.open { position:fixed !important; inset:70px 0 auto 0 !important; width:100%; min-height:0; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:2px; padding:16px 20px 20px; background:#fff !important; border-bottom:1px solid #eadde0; box-shadow:0 14px 26px #4d0a1824; }
+        .nav nav.open > a, .nav nav.open .nav-drop summary { padding:12px 10px; color:var(--hero-ink) !important; border:0; border-radius:8px; font-size:14px; }
+        .nav nav.open > a.on { background:var(--hero-wine) !important; color:#fff !important; }
+        .nav nav.open .nav-sub, .nav nav.open .nav-drop .nav-sub { grid-column:1 / -1; padding:2px 0 4px 10px; background:#fff7f9 !important; }
+        .nav nav.open .nav-sub a { color:var(--hero-wine) !important; }
+        .hero-redesign { min-height:auto; }
+        .hero-redesign .wrap { grid-template-columns:1fr; min-height:auto; gap:0; padding-top:118px; padding-bottom:0; }
+        .hero-redesign .heel-home-copy { max-width:590px; }
+        .hero-redesign h1 { font-size:clamp(55px,13.6vw,84px); }
+        .hero-redesign .heel-home-art { justify-self:center; width:min(720px,116%); height:min(70vw,520px); margin-top:-8px; }
+        .hero-redesign .heel-home-art::before { width:78%; height:72%; right:2%; bottom:8%; }
+        .hero-redesign .heel-home-art::after { width:68%; height:auto; aspect-ratio:1; right:3%; top:4%; border-width:3px; }
+        .hero-redesign .heel-home-art img { right:-3%; width:105%; }
+        .hero-slider-dots { position:relative; order:3; top:auto; left:auto; display:flex; justify-content:center; gap:12px; margin:4px 0 16px; }
+        .hero-slider-dots span { width:12px; height:12px; }
+        .hero-trust-strip { margin:0; padding:0 12px 28px; }
+        .hero-trust-strip .wrap { border-radius:26px; }
+        .hero-trust-strip .wrap > div { flex-direction:column; gap:8px; min-height:154px; padding:16px 7px; font-size:12px; text-align:center; }
+        .hero-trust-strip .wrap > div + div { border-left:1px solid var(--hero-wine); }
+        .trust-icon { width:30px; height:30px; }
+      }
+      @media (max-width:500px) {
+        .hero-redesign .wrap { padding-top:101px; }
+        .hero-redesign .eyebrow { gap:9px; font-size:12px; }
+        .hero-redesign .eyebrow::after { width:48px; }
+        .hero-redesign h1 { margin:22px 0 18px; font-size:clamp(49px,13.6vw,63px); }
+        .hero-redesign p { margin-bottom:25px; font-size:15px; }
+        .hero-actions { display:grid; gap:12px; }
+        .hero-actions .btn { width:100%; min-width:0; padding:15px 20px; }
+        .hero-redesign .heel-home-art { width:118%; height:380px; margin-left:-9%; }
+        .hero-trust-strip .wrap > div { min-height:139px; font-size:11px; }
+        .trust-icon { width:28px; height:28px; }
+      }
+    </style>
+    <script>
+      (() => {
+        const navMenu = document.getElementById("navMenu");
+        const menuToggle = document.getElementById("menuToggle");
+        menuToggle?.addEventListener("click", () => {
+          const open = navMenu.classList.toggle("open");
+          menuToggle.setAttribute("aria-expanded", String(open));
+        });
+        navMenu?.addEventListener("click", (event) => {
+          if (event.target.closest("a")) {
+            navMenu.classList.remove("open");
+            menuToggle?.setAttribute("aria-expanded", "false");
+          }
+        });
+        home = function () {
+          const heels = P.filter((p) => !BAG_CATS.includes(p.cat) && p.cat !== "Slippers" && p.imgs?.[0]);
+          const slippers = P.filter((p) => p.cat === "Slippers" && p.imgs?.[0]);
+          const categories = HEEL_CATS.filter((c) => c !== "Slippers").map((c) => heels.find((p) => p.cat === c)).filter(Boolean).slice(0, 5);
+          const trust = `<section class="hero-trust-strip" aria-label="24 Heelz promises"><div class="wrap"><div><svg class="trust-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7L12 3Z"/></svg><span>Premium Quality</span></div><div><svg class="trust-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h3.8L21 12.2V16h-7z"/><circle cx="7" cy="18" r="1.7"/><circle cx="17" cy="18" r="1.7"/></svg><span>Fast Nationwide Delivery</span></div><div><svg class="trust-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.4-3 7.9-7 10-4-2.1-7-5.6-7-10V6l7-3Z"/><path d="m8.6 11.5 2.2 2.2 4.6-4.6"/></svg><span>Secure Payments</span></div><div><svg class="trust-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><path d="M4 13h3v6H5a1 1 0 0 1-1-1v-5Zm13 0h3v5a1 1 0 0 1-1 1h-2v-6Z"/><path d="M17 19c0 1.2-1.1 2-2.5 2H12"/></svg><span>24/7 Support</span></div></div></section>`;
+          return `<section class="heel-home hero-redesign"><div class="wrap"><div class="heel-home-copy"><div class="eyebrow">24 HEELZ NG &bull; THE HEEL HOUSE</div><h1>Heels made<br>to <em>hold</em> the<br>room.</h1><p>From crystal-lit stilettos to polished platforms, discover the pair that turns every entrance into a moment.</p><div class="hero-actions"><a class="btn hero-primary" href="#shop">Shop All Heels <span aria-hidden="true">&rarr;</span></a><a class="btn hero-secondary" href="#lookbook">Explore Lookbook <span aria-hidden="true">&rarr;</span></a></div></div><div class="hero-slider-dots" aria-label="Hero slide 1 of 4"><span class="active"></span><span></span><span></span><span></span></div><div class="heel-home-art"><img src="/assets/auntywig.png" alt="Woman reclining in gold heels" fetchpriority="high"></div></div></section>${trust}<section class="heel-spotlight" id="heel-gallery"><div class="wrap"><div class="heel-spotlight-head"><div><div class="eyebrow">THE MAIN EVENT</div><h2>The heel gallery.</h2></div><p>Choose your silhouette. Every collection is built around the heelâ€”its line, height, texture and impact.</p></div><div class="heel-gallery">${categories.map((p) => `<button class="heel-gallery-card" data-cat="${esc(p.cat)}">${img(p)}<span>${esc(p.cat)}</span></button>`).join("")}</div></div></section>${slippers.length ? `<section class="slipper-edit">${homeCar("OUR BEST SELLING PRODUCTS", slippers, "#shop/Slippers")}</section>` : ""}${bestSelling(heels.slice(0, 15))}`;
         };
         if (!location.hash || location.hash === "#home") window.dispatchEvent(new Event("hashchange"));
       })();
