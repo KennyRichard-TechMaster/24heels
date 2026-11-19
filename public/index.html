@@ -437,21 +437,50 @@
         object-fit: cover;
       }
       .adm {
-        padding: 30px 0 90px;
+        padding: 34px 0 90px;
       }
+      .admin-shell {
+        overflow:hidden;
+        border:1px solid #e8dce1;
+        border-radius:20px;
+        background:#fff;
+        box-shadow:0 18px 44px #4e1c2d12;
+      }
+      .admin-head {
+        padding:28px;
+        color:#fff;
+        background:linear-gradient(135deg,#451224,#7a2142 65%,#9b6277);
+      }
+      .admin-head h1 { margin:0; color:#fff; }
+      .admin-head p { margin:6px 0 0; color:#f9e8ed; }
+      .admin-head .btn { background:#fff; color:#5c1730; border-color:#fff; }
+      .admin-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:24px; }
+      .admin-stat { padding:13px 14px; border:1px solid #ffffff36; border-radius:12px; background:#ffffff12; }
+      .admin-stat span { display:block; color:#f7dfe6; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+      .admin-stat b { display:block; margin-top:3px; font-size:23px; }
+      .admin-main { padding:20px 24px 28px; }
+      .admin-panel-title { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:18px; }
+      .admin-panel-title h2 { margin:0; }
       .tabs {
         display: flex;
-        gap: 8px;
-        margin: 14px 0;
+        gap: 5px;
+        margin:0;
+        padding:10px 14px;
+        overflow:auto;
+        background:#fbf7f8;
+        border-bottom:1px solid #eee1e6;
       }
       .tabs button {
-        border: 1px solid var(--ink);
-        background: #fff;
-        border-radius: 20px;
-        padding: 8px 16px;
+        border:0;
+        background:transparent;
+        color:#6b5360;
+        border-radius:9px;
+        padding:10px 14px;
+        white-space:nowrap;
+        font-weight:750;
       }
       .tabs .on {
-        background: var(--ink);
+        background: var(--wine);
         color: #fff;
       }
       .grid2 {
@@ -461,9 +490,24 @@
       }
       .ord {
         border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 14px;
+        border-radius:13px;
+        padding:16px;
         margin-bottom: 12px;
+        background:#fff;
+        box-shadow:0 7px 18px #35111c08;
+      }
+      .admin-access { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr); gap:18px; align-items:start; }
+      .admin-list { display:grid; gap:10px; }
+      .admin-user { display:flex; align-items:center; gap:12px; padding:13px; border:1px solid var(--line); border-radius:12px; }
+      .admin-avatar { display:grid; place-items:center; width:38px; height:38px; border-radius:50%; background:#f7e7ed; color:var(--wine); font-weight:800; }
+      .admin-user-copy { flex:1; min-width:0; }
+      .admin-user-copy small { display:block; color:var(--mute); margin-top:2px; }
+      @media (max-width:760px) {
+        .admin-head { padding:20px; }
+        .admin-stats { grid-template-columns:repeat(2,1fr); }
+        .admin-main { padding:16px; }
+        .admin-access { grid-template-columns:1fr; }
+        .admin-panel-title { align-items:start; flex-direction:column; }
       }
       .checkout-totals { display:grid; grid-template-columns:1fr auto; gap:9px 18px; margin:18px 0; padding:16px; border:1px solid var(--line); border-radius:10px; background:#fff; }
       .checkout-totals strong { padding-top:9px; border-top:1px solid var(--line); }
@@ -956,6 +1000,7 @@
       let P = [],
         O = [],
         D = [],
+        A = [],
         S = { email: "" },
         CART = LS.get("hz_cart", []),
         TOKEN = sessionStorage.getItem("hz_tok") || "";
@@ -1454,13 +1499,20 @@
         TAB = "orders";
       function admin() {
         if (!AUTH)
-          return `<div class="wrap" style="max-width:380px;padding:60px 20px"><h1>Admin login</h1><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in</button></form></div>`;
+          return `<div class="wrap" style="max-width:420px;padding:60px 20px"><section class="ord"><div class="eyebrow">24 Heelz NG operations</div><h1>Admin login</h1><p class="mut">Manage orders, products, delivery pricing and team access.</p><form id="lf"><label>Username</label><input name="u" required autocomplete="username"><label>Password</label><input name="p" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:16px;width:100%">Log in securely</button></form></section></div>`;
         const checks = O.filter((o) => o.status == "Payment Confirming").length;
-        return `<div class="wrap adm"><div class="sh"><h1>Dashboard${checks ? ` <span class="payment-alert">${checks} payment check${checks == 1 ? "" : "s"} waiting</span>` : ""}</h1><button class="btn alt sm" id="lo">Log out</button></div><div class="tabs">${["orders", "products", "delivery", "settings"].map((t) => `<button data-t="${t}" class="${t == TAB ? "on" : ""}">${t == "orders" ? `Orders (${checks} payment checks)` : t === "delivery" ? "Delivery Areas & Prices" : t[0].toUpperCase() + t.slice(1)}</button>`).join("")}</div><div id="tb"></div></div>`;
+        const orderValue = O.reduce((total, order) => total + Number(order.total || 0), 0);
+        const labels = { orders: `Orders${checks ? ` · ${checks} waiting` : ""}`, products: "Products", delivery: "Delivery prices", admins: "Admin accounts", settings: "Store settings" };
+        return `<div class="wrap adm"><div class="admin-shell"><header class="admin-head"><div class="sh"><div><div class="eyebrow" style="color:#f7dfe6">24 Heelz NG operations</div><h1>Store dashboard</h1><p>Keep your boutique, deliveries and customer orders in one place.</p></div><button class="btn alt sm" id="lo">Log out</button></div><div class="admin-stats"><div class="admin-stat"><span>Total orders</span><b>${O.length}</b></div><div class="admin-stat"><span>Payment checks</span><b>${checks}</b></div><div class="admin-stat"><span>Products</span><b>${P.length}</b></div><div class="admin-stat"><span>Order value</span><b>${N(orderValue)}</b></div></div></header><nav class="tabs">${Object.entries(labels).map(([key,label])=>`<button data-t="${key}" class="${key==TAB?"on":""}">${label}</button>`).join("")}</nav><main class="admin-main"><div id="tb"></div></main></div></div>`;
       }
       function tab() {
         const tb = $("#tb");
         if (!tb) return;
+        if (TAB == "admins") {
+          tb.innerHTML = `<div class="admin-panel-title"><div><div class="eyebrow">Team access</div><h2>Admin accounts</h2><p class="mut">Add trusted staff accounts. Passwords are stored securely and never displayed.</p></div></div><div class="admin-access"><section class="ord"><h3 style="margin-top:0">Current administrators</h3><div class="admin-list">${A.length ? A.map(admin => `<div class="admin-user"><span class="admin-avatar">${esc(admin.username.slice(0,1).toUpperCase())}</span><span class="admin-user-copy"><b>${esc(admin.username)}</b><small>${esc(admin.role || "Admin")} · Added ${admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : "recently"}</small></span>${admin.username === "CEO" ? '<span class="pill">Owner</span>' : `<button class="btn alt sm" data-admin-delete="${esc(admin.username)}">Remove</button>`}</div>`).join("") : '<p class="mut">Loading team accounts…</p>'}</div></section><section class="ord"><h3 style="margin-top:0">Add administrator</h3><p class="mut">Create a separate sign-in for each trusted team member.</p><form id="admin-create"><label>Username *</label><input name="username" required minlength="3" maxlength="60" pattern="[A-Za-z0-9._-]+" placeholder="e.g. store-manager"><label>Password *</label><input name="password" type="password" required minlength="4" autocomplete="new-password" placeholder="At least 4 characters"><button class="btn" style="margin-top:16px;width:100%">Create admin account</button></form></section></div>`;
+          $("#admin-create").onsubmit = async event => { event.preventDefault(); const form = Object.fromEntries(new FormData(event.target)); try { await api("POST", "admins", form); A = await api("GET", "admins"); tab(); toast("Admin account created"); } catch (error) { toast(error.message); } };
+          return;
+        }
         if (TAB == "delivery") {
           const groupKey = area => `${area.state || "Lagos"}|${area.lga}`;
           const groups = [...new Set(D.map(groupKey))].sort((a,b)=>a.localeCompare(b));
@@ -1713,6 +1765,12 @@
         $("#tb").onclick = async (e) => {
           const t = e.target;
           if (t.id == "np") editP();
+          const adminDelete = t.closest("[data-admin-delete]");
+          if (adminDelete) {
+            const username = adminDelete.dataset.adminDelete;
+            if (confirm(`Remove admin account “${username}”?`)) try { await api("DELETE", "admins/" + encodeURIComponent(username)); A = A.filter(admin => admin.username !== username); tab(); toast("Admin account removed"); } catch (error) { toast(error.message); }
+            return;
+          }
           if (t.id == "delivery-add") { editDeliveryArea(); return; }
           const deliveryEdit = t.closest("[data-delivery-edit]");
           if (deliveryEdit) { editDeliveryArea(deliveryEdit.dataset.deliveryEdit); return; }
@@ -1810,11 +1868,12 @@
         if (pg == "order" && arg) { try { CURRENT_ORDER = await api("GET", "orders/" + arg + "/status"); } catch (e) { CURRENT_ORDER = LS.get("hz_order_" + arg, null); } }
         if (pg == "admin" && AUTH) {
           try {
-            [O, P, S, D] = await Promise.all([
+            [O, P, S, D, A] = await Promise.all([
               api("GET", "orders"),
               api("GET", "products"),
               api("GET", "settings"),
               api("GET", "delivery-areas"),
+              api("GET", "admins"),
             ]);
           } catch (e) {}
         }

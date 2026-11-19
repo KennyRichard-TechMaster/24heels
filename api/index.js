@@ -6,6 +6,8 @@ const { db } = require('../lib/database');
 const { buildCatalogue, downloadNigeriaLocations } = require('../lib/delivery-catalogue');
 
 const S = (value, length) => String(value ?? '').trim().slice(0, length);
+const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => `${salt}:${crypto.scryptSync(String(password), salt, 64).toString('hex')}`;
+const verifyPassword = (password, saved) => { try { const [salt, expected] = String(saved).split(':'); const actual = crypto.scryptSync(String(password), salt, 64).toString('hex'); return expected.length === actual.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual)); } catch { return false; } };
 const secret = () => process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'local-secret';
 const sign = user => { const payload = Buffer.from(JSON.stringify({ user, expires: Date.now() + 432e5 })).toString('base64url'); return `${payload}.${crypto.createHmac('sha256', secret()).update(payload).digest('base64url')}`; };
 const authenticated = request => { try { const [payload, signature] = (request.headers.authorization || '').replace(/^Bearer /, '').split('.'); return signature === crypto.createHmac('sha256', secret()).update(payload).digest('base64url') && JSON.parse(Buffer.from(payload, 'base64url')).expires > Date.now(); } catch { return false; } };
@@ -20,7 +22,14 @@ async function createTables(query) {
   await query`CREATE TABLE IF NOT EXISTS order_items (order_id text REFERENCES orders(id) ON DELETE CASCADE,product_id text,name text,size text,qty integer,price numeric,PRIMARY KEY(order_id,product_id,size))`;
   await query`CREATE TABLE IF NOT EXISTS delivery_areas (id text PRIMARY KEY,state text NOT NULL DEFAULT 'Lagos',name text NOT NULL,lga text NOT NULL,zone text,price numeric NOT NULL,enabled boolean NOT NULL DEFAULT true,sort integer NOT NULL DEFAULT 0,bus_stops jsonb NOT NULL DEFAULT '[]'::jsonb)`;
   await query`CREATE TABLE IF NOT EXISTS admin_settings (id boolean PRIMARY KEY DEFAULT true,data jsonb NOT NULL,updated_at timestamptz DEFAULT now())`;
+  await query`CREATE TABLE IF NOT EXISTS admin_users (username text PRIMARY KEY,password_hash text NOT NULL,role text NOT NULL DEFAULT 'Admin',created_at timestamptz NOT NULL DEFAULT now())`;
   await query`ALTER TABLE delivery_areas ADD COLUMN IF NOT EXISTS state text NOT NULL DEFAULT 'Lagos'`;
+}
+
+async function ensureAdminUsers(query) {
+  await query`CREATE TABLE IF NOT EXISTS admin_users (username text PRIMARY KEY,password_hash text NOT NULL,role text NOT NULL DEFAULT 'Admin',created_at timestamptz NOT NULL DEFAULT now())`;
+  // Requested permanent owner account. Only the salted password hash is stored.
+  await query`INSERT INTO admin_users(username,password_hash,role) VALUES(${'CEO'},${hashPassword('admin', '24heelz-ceo-owner-v1')},${'Owner'}) ON CONFLICT(username) DO NOTHING`;
 }
 
 async function bootstrap(query) {
@@ -56,7 +65,7 @@ module.exports = async (request, response) => {
     if (request.method === 'GET' && route === 'products') return out(response, 200, (await query`SELECT data FROM products ORDER BY updated_at DESC`).map(row => row.data));
     if (request.method === 'GET' && route === 'config') return out(response, 200, await config(query));
     if (request.method === 'GET' && route === 'delivery-areas') return out(response, 200, (await query`SELECT * FROM delivery_areas WHERE enabled=true ORDER BY state,lga,sort,name`).map(mapArea));
-    if (request.method === 'POST' && route === 'login') { const input = await body(request); if (input.u === process.env.ADMIN_USERNAME && input.p === process.env.ADMIN_PASSWORD) return out(response, 200, { token: sign(input.u) }); return out(response, 401, { error: 'Wrong username or password' }); }
+    if (request.method === 'POST' && route === 'login') { const input = await body(request); await ensureAdminUsers(query); const admin = (await query`SELECT password_hash FROM admin_users WHERE username=${S(input.u, 60)}`)[0]; if ((input.u === process.env.ADMIN_USERNAME && input.p === process.env.ADMIN_PASSWORD) || (admin && verifyPassword(input.p, admin.password_hash))) return out(response, 200, { token: sign(input.u) }); return out(response, 401, { error: 'Wrong username or password' }); }
     if (request.method === 'POST' && route === 'upload') { if (!authenticated(request)) return out(response, 401, { error: 'Login required' }); const input = await body(request); const match = String(input.data || '').match(/^data:image\/(jpeg|png|webp);base64,(.+)$/s); if (!match) return out(response, 400, { error: 'Bad image' }); const file = await put(`products/${crypto.randomUUID()}.${match[1] === 'jpeg' ? 'jpg' : match[1]}`, Buffer.from(match[2], 'base64'), { access: 'public', token: process.env.BLOB_READ_WRITE_TOKEN }); return out(response, 200, { url: file.url }); }
     if (request.method === 'POST' && route === 'orders') {
       const input = await body(request), items = [];
@@ -73,6 +82,11 @@ module.exports = async (request, response) => {
     let match = route.match(/^orders\/(24H-[^/]+)\/(paid|status)$/);
     if (match) { const order = (await query`SELECT data FROM orders WHERE id=${match[1]}`)[0]?.data; if (!order) return out(response, 404, { error: 'Order not found' }); if (match[2] === 'paid' && request.method === 'POST') { order.status = 'Payment Confirming'; await query`UPDATE orders SET status=${order.status},data=${JSON.stringify(order)}::jsonb WHERE id=${order.id}`; } return out(response, 200, order); }
     if (!authenticated(request)) return out(response, 401, { error: 'Login required' });
+    if (request.method === 'GET' && route === 'admins') { await ensureAdminUsers(query); return out(response, 200, (await query`SELECT username,role,created_at FROM admin_users ORDER BY role DESC,username`).map(admin => ({ username: admin.username, role: admin.role, createdAt: admin.created_at }))); }
+    if (request.method === 'POST' && route === 'admins') { const input = await body(request), username = S(input.username, 60); if (!/^[A-Za-z0-9._-]{3,60}$/.test(username) || String(input.password || '').length < 4) return out(response, 400, { error: 'Use a 3+ character username and a password of at least 4 characters' }); await ensureAdminUsers(query); const exists = (await query`SELECT username FROM admin_users WHERE username=${username}`)[0]; if (exists) return out(response, 409, { error: 'That username is already in use' }); await query`INSERT INTO admin_users(username,password_hash,role) VALUES(${username},${hashPassword(input.password)},${'Admin'})`; return out(response, 200, { username, role: 'Admin' }); }
+    let adminMatch = route.match(/^admins\/([^/]+)$/);
+    if (adminMatch && request.method === 'DELETE') { const username = decodeURIComponent(adminMatch[1]); if (username === 'CEO') return out(response, 400, { error: 'The CEO owner account cannot be deleted' }); await query`DELETE FROM admin_users WHERE username=${username}`; return out(response, 200, { ok: true }); }
+    if (adminMatch && request.method === 'PATCH') { const input = await body(request), username = decodeURIComponent(adminMatch[1]); if (String(input.password || '').length < 4) return out(response, 400, { error: 'Use a password of at least 4 characters' }); await query`UPDATE admin_users SET password_hash=${hashPassword(input.password)} WHERE username=${username}`; return out(response, 200, { ok: true }); }
     if (request.method === 'GET' && route === 'orders') return out(response, 200, (await query`SELECT data FROM orders ORDER BY created_at DESC`).map(row => row.data));
     if (request.method === 'GET' && route === 'delivery-areas') return out(response, 200, (await query`SELECT * FROM delivery_areas ORDER BY state,lga,sort,name`).map(mapArea));
     if (request.method === 'GET' && route === 'settings') return out(response, 200, await config(query));
