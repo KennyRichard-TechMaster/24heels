@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { put } = require('@vercel/blob');
 const { db } = require('../lib/database');
+const { buildCatalogue, downloadNigeriaLocations } = require('../lib/delivery-catalogue');
 
 const S = (value, length) => String(value ?? '').trim().slice(0, length);
 const secret = () => process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'local-secret';
@@ -29,12 +30,24 @@ async function bootstrap(query) {
   return { imported: true, products: (old.products || []).length, orders: (old.orders || []).length, areas: (old.deliveryAreas || []).length };
 }
 
+async function seedDeliveryCatalogue(query) {
+  await createTables(query);
+  const source = await downloadNigeriaLocations();
+  const areas = buildCatalogue(source);
+  await query`DELETE FROM delivery_areas`;
+  for (let index = 0; index < areas.length; index += 80) {
+    await Promise.all(areas.slice(index, index + 80).map(area => query`INSERT INTO delivery_areas(id,state,name,lga,zone,price,enabled,sort,bus_stops) VALUES(${area.id},${area.state},${area.name},${area.lga},${area.zone},${area.price},${area.enabled},${area.sort},${JSON.stringify(area.busStops)}::jsonb)`));
+  }
+  return { states: source.states.length, lgas: source.totalLgas, areas: areas.length };
+}
+
 module.exports = async (request, response) => {
   try {
     const query = db();
     const url = new URL(request.url, 'http://localhost');
     const route = String(request.query?.path || url.searchParams.get('path') || '').replace(/^\//, '');
     if (request.method === 'POST' && route === 'bootstrap') { const input = await body(request); if (!process.env.ADMIN_PASSWORD || input.password !== process.env.ADMIN_PASSWORD) return out(response, 401, { error: 'Unauthorized' }); return out(response, 200, await bootstrap(query)); }
+    if (request.method === 'POST' && route === 'seed-delivery') { const input = await body(request); if (!process.env.ADMIN_PASSWORD || input.password !== process.env.ADMIN_PASSWORD) return out(response, 401, { error: 'Unauthorized' }); return out(response, 200, await seedDeliveryCatalogue(query)); }
     if (request.method === 'GET' && route === 'products') return out(response, 200, (await query`SELECT data FROM products ORDER BY updated_at DESC`).map(row => row.data));
     if (request.method === 'GET' && route === 'config') return out(response, 200, await config(query));
     if (request.method === 'GET' && route === 'delivery-areas') return out(response, 200, (await query`SELECT * FROM delivery_areas WHERE enabled=true ORDER BY state,lga,sort,name`).map(mapArea));
